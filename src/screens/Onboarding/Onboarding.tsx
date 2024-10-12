@@ -8,9 +8,11 @@ import { FONT_NAMES } from '~/core/constants/fontConstants';
 import { save } from '~/lib/utils/secureStorage';
 import { useAuth } from '~/providers/AuthProvider';
 import { STORAGE_KEYS } from '~/core/constants/asyncKeys';
-import AppButton from '~/lib/components/AppButton';
+import AppButton from '~/lib/components/AppButton'; 
 import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '~/navigation'; 
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 // Array of onboarding steps, each containing an icon, title, and description
 const onboardingSteps = [
   {
@@ -34,6 +36,7 @@ const onboardingSteps = [
 const Onboarding = () => {
   const { top, bottom } = useSafeAreaInsets();
   const { setHasBeenUsed } = useAuth();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   // State to track the current onboarding step
   const [step, setStep] = useState(0);

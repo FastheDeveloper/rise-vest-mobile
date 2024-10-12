@@ -11,6 +11,7 @@ import { View, Text } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AuthProvider from '~/providers/AuthProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
 export default function App() {
   SplashScreen.preventAutoHideAsync();
 
@@ -57,9 +58,13 @@ export default function App() {
   }
   return (
     <GestureHandlerRootView>
-    <AuthProvider>
-  <RootStack />
-  </AuthProvider>
+        <NavigationContainer>
+        <AuthProvider>
+
+<RootStack />
+</AuthProvider>
+        </NavigationContainer>
+
   </GestureHandlerRootView>
 );
 }
