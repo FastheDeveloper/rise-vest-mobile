@@ -53,7 +53,7 @@ const AppButton: React.FC<AppButtonProps> = ({
     <Pressable
       style={[
         styles.button,
-        pressableProps.disabled ? styles.disabled : styles.enabled,
+        pressableProps.disabled ? [styles.disabled, { opacity: 0.4 }] : styles.enabled,
         style
       ]}
       {...pressableProps}>

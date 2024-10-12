@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { getValueFor, save } from '~/lib/utils/secureStorage';
 import { STORAGE_KEYS } from '~/core/constants/asyncKeys';
@@ -13,6 +13,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  setIsAuthenticated: (value: boolean) => void;
 }
 
 // Create the context with a default value
@@ -29,8 +30,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [hasBeenUsed, setHasBeenUsed] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Check authentication status from storage
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
       const [token, expiresAt] = await Promise.all([
         getValueFor(STORAGE_KEYS.AUTH_TOKEN),
@@ -38,7 +38,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       ]);
 
       // Determine if the token has expired
-      const expiresAtDate = new Date(expiresAt || '');
+      const expiresAtDate = expiresAt ? new Date(expiresAt) : new Date();
       const hasExpired = new Date() > expiresAtDate;
 
       setIsAuthenticated(!!token && !hasExpired);
@@ -49,12 +49,23 @@ function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Check if the app has been used before
+  const checkBeenUsed = useCallback(async () => {
+    try {
+      const usedApp = await getValueFor(STORAGE_KEYS.HAS_APP_BEEN_USED);
+      setHasBeenUsed(!!usedApp);
+    } catch (err) {}
+  }, []);
+
+  useEffect(() => {
+    checkBeenUsed();
+  }, [checkBeenUsed]);
 
   useEffect(() => {
     checkAuthStatus();
-  }, []);
-
+  }, [checkAuthStatus]);
   // Dummy sign-in function
   const signIn = async (email: string, password: string) => {
     setLoading(true);
@@ -94,6 +105,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        setIsAuthenticated,
         authToken,
         loading,
         hasBeenUsed,
