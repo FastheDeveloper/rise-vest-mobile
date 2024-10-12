@@ -4,10 +4,10 @@ import React, { useRef, useEffect } from 'react';
 import { Text, View, Animated } from 'react-native';
 
 import { RootStackParamList } from '.';
-import { HeaderButton } from '../components/HeaderButton';
+import { HeaderButton } from '../lib/components/HeaderButton';
 import One from '../screens/Dashboard/one';
 import Two from '../screens/Dashboard/two';
-import { ActiveTabDot, FeedTabIcon, HomeTabIcon, PlansTabIcon, WalletTabIcon } from '~/assets/TabIcons/Tabicons';
+import { ActiveTabDot, FeedTabIcon, HomeTabIcon, PlansTabIcon, WalletTabIcon } from '~/lib/assets/TabIcons/Tabicons';
 
 const Tab = createBottomTabNavigator();
 
