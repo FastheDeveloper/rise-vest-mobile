@@ -13,6 +13,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  setIsAuthenticated: (value: boolean) => void;
 }
 
 // Create the context with a default value
@@ -104,6 +105,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        setIsAuthenticated,
         authToken,
         loading,
         hasBeenUsed,

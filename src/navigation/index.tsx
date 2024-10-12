@@ -7,12 +7,18 @@ import Onboarding from '~/screens/Onboarding/Onboarding';
 import SignUp from '~/screens/Auth/SignUp';
 import { useAuth } from '~/providers/AuthProvider';
 import { Fragment, useMemo } from 'react';
+import TellUsMore from '~/screens/Auth/TellUsMore';
+import SignIn from '~/screens/Auth/SignIn';
+import Approved from '~/screens/Auth/Approved';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
   Modal: undefined;
   Onboarding:undefined;
   SignUp:undefined;
+  SignIn:undefined;
+  TellUsMore:undefined;
+  Approved:undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -37,6 +43,9 @@ export default function RootStack() {
         node: (
           <Fragment>
             <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="TellUsMore" component={TellUsMore} />
+            <Stack.Screen name="SignIn" component={SignIn} />
+            <Stack.Screen name="Approved" component={Approved} />
           </Fragment>
         ),
       },
