@@ -10,6 +10,7 @@ import { Fragment, useMemo } from 'react';
 import TellUsMore from '~/screens/Auth/TellUsMore';
 import SignIn from '~/screens/Auth/SignIn';
 import Approved from '~/screens/Auth/Approved';
+import CreatePin from '~/screens/Auth/CreatePin';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
@@ -19,6 +20,7 @@ export type RootStackParamList = {
   SignIn:undefined;
   TellUsMore:undefined;
   Approved:undefined;
+  CreatePin:undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -26,8 +28,8 @@ const options = {
   headerShown: false,
 };
 export default function RootStack() {
-  const { isAuthenticated, hasBeenUsed } = useAuth();
-
+  const { isAuthenticated, hasBeenUsed,hasPin } = useAuth();
+console.log('hasPin stack', hasPin);
   const screenList = useMemo(
     () => [
       {
@@ -50,6 +52,14 @@ export default function RootStack() {
         ),
       },
       {
+        cond: !hasPin,
+        node: (
+          <Fragment>
+            <Stack.Screen name="CreatePin" component={CreatePin} />
+          </Fragment>
+        ),
+      },
+      {
         cond: true,
         node: (
           <Fragment>
@@ -59,7 +69,7 @@ export default function RootStack() {
         ),
       },
     ],
-    [ hasBeenUsed, isAuthenticated]
+    [ hasBeenUsed, isAuthenticated,hasPin]
   );
 
  // Memoize the renderApp function
