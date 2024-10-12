@@ -11,9 +11,9 @@ import { FONT_NAMES } from '~/core/constants/fontConstants';
 // Custom button component with support for loading state and optional icons
 interface AppButtonProps extends PressableProps {
   loading?: boolean;
-  leftIcon?: React.ComponentProps<typeof FontAwesome>['name'];
+  leftIcon?: React.ComponentProps<typeof FontAwesome5>['name'];
   label: string;
-  rightIcon?:  React.ComponentProps<typeof FontAwesome>['name'];
+  rightIcon?:  React.ComponentProps<typeof FontAwesome5>['name'];
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -36,14 +36,14 @@ const AppButton: React.FC<AppButtonProps> = ({
     <>
       {leftIcon && (
         <View style={styles.leftIcon}>
-          <FontAwesome name={leftIcon} size={20} color={textStyle?.color} />
+          <FontAwesome5 name={leftIcon} size={20} color={textStyle?.color} />
 
         </View>
       )}
       <Text style={[styles.buttonText, textStyle]}>{label}</Text>
       {rightIcon && (
         <View style={styles.rightIcon}>
-          <FontAwesome name={rightIcon} size={20} color={textStyle?.color} />
+          <FontAwesome5 name={rightIcon} size={20} color={textStyle?.color} />
         </View>
       )}
     </>

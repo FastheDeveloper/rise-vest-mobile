@@ -9,7 +9,7 @@ import { save } from '~/lib/utils/secureStorage';
 import { useAuth } from '~/providers/AuthProvider';
 import { STORAGE_KEYS } from '~/core/constants/asyncKeys';
 import AppButton from '~/lib/components/AppButton';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 
 // Array of onboarding steps, each containing an icon, title, and description
 const onboardingSteps = [
@@ -162,7 +162,7 @@ const Onboarding = () => {
                 onPress={onBack}
                 style={styles.backButton}
               >
-                <FontAwesome name="arrow-left" size={20} color={arrowColor} />
+                <FontAwesome5 name="arrow-left" size={20} color={arrowColor} />
               </Pressable>
               <View style={{ flex: 0.4 }}>
                 <AppButton 
@@ -205,14 +205,14 @@ const styles = StyleSheet.create({
     paddingTop: '15%',
   },
   title: {
-    fontFamily: FONT_NAMES.DMSANS_MEDIUM,
+    fontFamily: FONT_NAMES.SPACEG_BOLD,
     fontSize: 24,
     textAlign: 'left',
   },
   description: {
     fontFamily: FONT_NAMES.DMSANS_REGULAR,
     fontSize: 14,
-    color: APP_COLOR.MAIN_GREY_TEXT,
+    color: APP_COLOR.MAIN_DARK,
     textAlign: 'left',
     marginTop: 10,
   },
