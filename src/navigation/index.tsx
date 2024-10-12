@@ -3,10 +3,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import TabNavigator from './tab-navigator';
 import Modal from '../screens/modal';
+import Onboarding from '~/screens/Onboarding/Onboarding';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
   Modal: undefined;
+  Onboarding:undefined
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -14,7 +16,13 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function RootStack() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="TabNavigator">
+      <Stack.Navigator initialRouteName="Onboarding">
+      <Stack.Screen
+          name="Onboarding"
+          component={Onboarding}
+          options={{ headerShown: false }}
+          
+        />
         <Stack.Screen
           name="TabNavigator"
           component={TabNavigator}

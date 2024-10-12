@@ -9,7 +9,8 @@ import { FONT_NAMES } from '~/core/constants/fontConstants';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, Text } from 'react-native';
 import LottieView from 'lottie-react-native';
-
+import AuthProvider from '~/providers/AuthProvider';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function App() {
   SplashScreen.preventAutoHideAsync();
 
@@ -55,6 +56,10 @@ export default function App() {
     return <LottieAnimation />;
   }
   return (
+    <GestureHandlerRootView>
+    <AuthProvider>
   <RootStack />
+  </AuthProvider>
+  </GestureHandlerRootView>
 );
 }
