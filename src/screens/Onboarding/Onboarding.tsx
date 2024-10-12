@@ -37,7 +37,8 @@ const onboardingSteps = [
 const Onboarding = () => {
   const { top, bottom } = useSafeAreaInsets();
   const { setHasBeenUsed } = useAuth();
- 
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
   // State to track the current onboarding step
   const [step, setStep] = useState(0);
   const data = onboardingSteps[step]; // Get the current step data
@@ -90,6 +91,16 @@ const Onboarding = () => {
       }
     })
     .runOnJS(true);
+
+  const handleSignUp = async () => {
+    await endOnboarding();
+    // navigation.navigate('SignUp');
+  };
+
+  const handleSignIn = async () => {
+    await endOnboarding();
+    navigation.navigate('SignIn');
+  };
 
   return (
     <GestureDetector gesture={swipeGesture}>
@@ -145,13 +156,13 @@ const Onboarding = () => {
             <>
               <AppButton 
                 label="Sign up" 
-                onPress={endOnboarding} 
+                onPress={handleSignUp}
                 style={{ backgroundColor: accentColor }}
                 textStyle={{ color: APP_COLOR.MAIN_WHITE }}
               />
               <AppButton 
                 label="Sign in" 
-                onPress={endOnboarding} 
+                onPress={handleSignIn}
                 style={{ backgroundColor: APP_COLOR.MAIN_GREY }}
                 textStyle={{ color: accentColor }}
                 className="mt-2.5"

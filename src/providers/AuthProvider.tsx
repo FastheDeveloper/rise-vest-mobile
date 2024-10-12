@@ -14,6 +14,9 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   setIsAuthenticated: (value: boolean) => void;
+  hasPin: boolean;
+  setHasPin: (value: boolean) => void;
+  setPin: (pin: string) => Promise<void>;
 }
 
 // Create the context with a default value
@@ -28,6 +31,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [hasBeenUsed, setHasBeenUsed] = useState(false);
+  const [hasPin, setHasPin] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const checkAuthStatus = useCallback(async () => {
@@ -59,6 +63,22 @@ function AuthProvider({ children }: AuthProviderProps) {
     } catch (err) {}
   }, []);
 
+  const setPin = useCallback(async (pin: string) => {
+    console.log('pin', pin);
+    setHasPin(true);
+    await save(STORAGE_KEYS.HAS_PIN, pin);
+
+  }, []);
+
+  // Check if the user has a pin
+  const checkHasPin = useCallback(async () => {
+    try {
+      const hasPin = await getValueFor(STORAGE_KEYS.HAS_PIN);
+      console.log('hasPin', hasPin);
+      setHasPin(!!hasPin);
+    } catch (err) {}
+  }, []);
+
   useEffect(() => {
     checkBeenUsed();
   }, [checkBeenUsed]);
@@ -66,6 +86,11 @@ function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     checkAuthStatus();
   }, [checkAuthStatus]);
+
+  useEffect(() => {
+    checkHasPin();
+  }, [checkHasPin]);
+
   // Dummy sign-in function
   const signIn = async (email: string, password: string) => {
     setLoading(true);
@@ -105,14 +130,17 @@ function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        setIsAuthenticated,
         authToken,
         loading,
         hasBeenUsed,
+        hasPin,
+        setHasPin,
         setHasBeenUsed,
         signIn,
         signUp,
         signOut,
+        setIsAuthenticated,
+        setPin,
       }}
     >
       {children}
