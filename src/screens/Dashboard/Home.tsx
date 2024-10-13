@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppButton from '~/lib/components/AppButton';
@@ -14,6 +14,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { APP_COLOR } from '~/core/constants/colorConstants';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '~/navigation';
 
 export default function TabOneScreen() {
   const insets = useSafeAreaInsets();
@@ -25,7 +28,7 @@ export default function TabOneScreen() {
     { balance: '$15,000.00', gains: '0.35%' },
     { balance: '$8,000.00', gains: '-0.18%' },
   ];
-
+const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
   const toggleBalanceVisibility = () => {
     setIsBalanceVisible(!isBalanceVisible);
   };
@@ -204,12 +207,12 @@ export default function TabOneScreen() {
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 16 }}>
-              <View className="h-[243px] w-[180px] items-center justify-center rounded-xl bg-[#71879C1A]">
+              <Pressable onPress={()=>navigation.navigate('CreatePlan')}  className="h-[243px] w-[180px] items-center justify-center rounded-xl bg-[#71879C1A]">
                 <PlusIcon width={43} height={43} />
                 <Text className="mx-4 mt-2 text-center font-dmsans-semibold text-lg text-[#333333]">
                   Create an investment plan
                 </Text>
-              </View>
+              </Pressable>
               {investmentPlans.map((plan, index) => (
                 <ImageBackground
                   key={index}

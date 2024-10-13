@@ -4,57 +4,78 @@ import { Entypo, FontAwesome } from '@expo/vector-icons';
 import { FONT_NAMES } from '~/core/constants/fontConstants';
 import { APP_COLOR } from '~/core/constants/colorConstants';
 
-// Add this type at the top of the file
+// Update these types
 type FontAwesomeIconName = React.ComponentProps<typeof FontAwesome>['name'];
 type EntypoIconName = React.ComponentProps<typeof Entypo>['name'];
+type IconComponent = React.ReactElement;
 
+// Update the interface
 interface InputFieldProps extends TextInputProps {
-  leftIcon?: FontAwesomeIconName;
-  label: string; // Make label required
-  rightIcon?: EntypoIconName;
+  leftIcon?: FontAwesomeIconName | IconComponent;
+  label?: string;
+  rightIcon?: EntypoIconName | IconComponent;
 }
 
 const InputField: React.FC<InputFieldProps> = ({ leftIcon, label, rightIcon, ...inputProps }) => {
   const [hide, setHide] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState( !!inputProps.value||false);
+  const [hasValue, setHasValue] = useState(!!inputProps.value || false);
   const animatedIsFocused = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(animatedIsFocused, {
-      toValue: (isFocused || hasValue) ? 1 : 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  }, [isFocused, hasValue]);
+    if (label) {
+      Animated.timing(animatedIsFocused, {
+        toValue: (isFocused || hasValue) ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [isFocused, hasValue, label]);
 
-  const labelStyle: Animated.AnimatedProps<TextStyle> = {
-    position: 'absolute' as const,
-    left: 16,
-    top: animatedIsFocused.interpolate({
-      inputRange: [0, 1],
-      outputRange: [17, -8],
-    }),
-    fontSize: animatedIsFocused.interpolate({
-      inputRange: [0, 1],
-      outputRange: [15, 12],
-    }),
-    color: animatedIsFocused.interpolate({
-      inputRange: [0, 1],
-      outputRange: [APP_COLOR.PLACEHOLDER_DARK, APP_COLOR.MAIN_GREEN],
-    }),
-    backgroundColor: APP_COLOR.MAIN_WHITE,
-    paddingHorizontal: 4,
-    fontFamily: FONT_NAMES.DMSANS_BOLD,
+  const labelStyle: Animated.AnimatedProps<TextStyle> = label
+    ? {
+        position: 'absolute' as const,
+        left: 16,
+        top: animatedIsFocused.interpolate({
+          inputRange: [0, 1],
+          outputRange: [17, -8],
+        }),
+        fontSize: animatedIsFocused.interpolate({
+          inputRange: [0, 1],
+          outputRange: [15, 12],
+        }),
+        color: animatedIsFocused.interpolate({
+          inputRange: [0, 1],
+          outputRange: [APP_COLOR.PLACEHOLDER_DARK, APP_COLOR.MAIN_GREEN],
+        }),
+        backgroundColor: APP_COLOR.MAIN_WHITE,
+        paddingHorizontal: 4,
+        fontFamily: FONT_NAMES.DMSANS_BOLD,
+      }
+    : {};
+
+  // Helper function to render icons
+  const renderIcon = (icon: FontAwesomeIconName | EntypoIconName | IconComponent, isLeft: boolean) => {
+    if (React.isValidElement(icon)) {
+      return icon;
+    }
+    if (isLeft) {
+      return <FontAwesome name={icon as FontAwesomeIconName} size={16} color={APP_COLOR.MAIN_GREY_TEXT} />;
+    }
+    return <Entypo name={icon as EntypoIconName} size={20} color={APP_COLOR.MAIN_TEAL} />;
   };
 
   return (
     <View style={styles.container}>
-      <View style={[styles.inputContainer, isFocused && styles.selectedField]}>
-        <Animated.Text style={labelStyle}>{label}</Animated.Text>
+      <View style={[
+        styles.inputContainer,
+        !label && styles.fullBorder,
+        isFocused && styles.selectedField,
+      ]}>
+        {label && <Animated.Text style={labelStyle}>{label}</Animated.Text>}
         {leftIcon && (
           <View style={styles.leftIcon} testID="left-icon">
-            <FontAwesome name={leftIcon} size={16} color={APP_COLOR.MAIN_GREY_TEXT} />
+            {renderIcon(leftIcon, true)}
           </View>
         )}
 
@@ -64,8 +85,13 @@ const InputField: React.FC<InputFieldProps> = ({ leftIcon, label, rightIcon, ...
             rightIcon || inputProps.secureTextEntry
               ? styles.inputWithRightIcon
               : styles.inputFullWidth,
+            !label && styles.inputWithoutLabel,
+            {
+              paddingBottom: label ? 15 : 0,
+            }
           ]}
           {...inputProps}
+          placeholder={!label ? inputProps.placeholder : undefined}
           placeholderTextColor={APP_COLOR.PLACEHOLDER_DARK}
           secureTextEntry={inputProps.secureTextEntry && !rightIcon ? hide : undefined}
           onFocus={(e) => {
@@ -86,14 +112,15 @@ const InputField: React.FC<InputFieldProps> = ({ leftIcon, label, rightIcon, ...
         {(rightIcon || inputProps.secureTextEntry) && (
           <View style={styles.rightIcon}>
             <Pressable onPress={() => (rightIcon ? null : setHide(!hide))} testID="passwordTest">
-              <Entypo
-                name={
-                  rightIcon ||
-                  (inputProps.secureTextEntry ? (hide ? 'eye' : 'eye-with-line') : undefined)
-                }
-                size={20}
-                color={APP_COLOR.MAIN_TEAL}
-              />
+              {rightIcon ? (
+                renderIcon(rightIcon, false)
+              ) : (
+                <Entypo
+                  name={inputProps.secureTextEntry ? (hide ? 'eye' : 'eye-with-line') : undefined}
+                  size={20}
+                  color={APP_COLOR.MAIN_TEAL}
+                />
+              )}
             </Pressable>
           </View>
         )}
@@ -130,7 +157,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: APP_COLOR.LIGHT_GREY,
     paddingLeft: '2%',
-    // paddingTop: 8, // Add some top padding for the label
   },
   leftIcon: {
     marginLeft: 8,
@@ -143,7 +169,6 @@ const styles = StyleSheet.create({
     paddingTop: 16, // Increase top padding to make room for label
 
     alignSelf: 'center',
-    paddingBottom: 15,
   },
   inputFullWidth: {
     width: '100%',
@@ -157,5 +182,12 @@ const styles = StyleSheet.create({
   },
   selectedField: {
     borderColor: APP_COLOR.MAIN_GREEN,
+  },
+  fullBorder: {
+    borderWidth: 1,
+    borderColor: APP_COLOR.LIGHT_GREY,
+  },
+  inputWithoutLabel: {
+    paddingTop: 0,
   },
 });

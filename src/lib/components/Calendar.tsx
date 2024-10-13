@@ -7,12 +7,12 @@ import { withModal } from '~/providers/modalService';
 
 
 // Calendar component wrapped with modal functionality
-export const Calendar = withModal(({ onDateSelected, closeModal }: { onDateSelected: (day: any) => void, closeModal: () => void }) => {
+export const CalendarModal = withModal(({ onDateSelected, closeModal ,currentDate}: { onDateSelected: (day: any) => void, closeModal: () => void ,currentDate:string}) => {
   const { top } = useSafeAreaInsets();
   return (
     <Pressable
       style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         flex: 1,
         paddingTop: top,
         paddingHorizontal: '5%',
@@ -31,6 +31,7 @@ export const Calendar = withModal(({ onDateSelected, closeModal }: { onDateSelec
           onDateSelected?.(day);
           closeModal();
         }}
+        current={currentDate}
         style={s.calendar}
         enableSwipeMonths={true}
         theme={{
@@ -57,7 +58,7 @@ const s = StyleSheet.create({
   calendar: {
     borderWidth: 0.5,
     borderColor: 'gray',
-    backgroundColor: APP_COLOR.MAIN_GREY_TEXT,
+    backgroundColor: "#71879C1A",
     borderRadius: 13,
     paddingHorizontal: 16,
   },

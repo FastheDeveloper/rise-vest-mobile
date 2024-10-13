@@ -1,4 +1,4 @@
-import { Keyboard, Text, View } from 'react-native';
+import { Keyboard, Text, TouchableWithoutFeedback, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -11,17 +11,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
+import { Calendar } from '~/lib/assets/svgs/Svgs';
+import { withModal } from '~/providers/modalService';
+import { CalendarModal } from '~/lib/components/Calendar';
+import { isAtLeast18YearsOld } from '~/lib/utils/fieldValidators';
 
-const TellUsMore = () => {
+const TellUsMore = withModal(({ openModal, closeModal }) => {
+  const eighteenYearsAgo = new Date();
+  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  const today = eighteenYearsAgo.toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
   const { top, bottom } = useSafeAreaInsets();
   const { signUp, loading } = useAuth();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [userDetails, setUserDetails] = useState({
-    email: '',
-    password: '',
+    firstName: '',
+    lastName: '',
+    nickName: '',
+    phoneNumber: '',
+    dateOfBirth: today,
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [showError, setShowError] = useState(false);
+  const [dateOfBirthError, setDateOfBirthError] = useState('');
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   // Listeners for keyboard visibility to adjust layout
@@ -39,12 +49,30 @@ const TellUsMore = () => {
     };
   }, []);
 
-  // Validate email when it changes
+  // // Validate email when it changes
+  // useEffect(() => {
+  //   handleEmailBlur(userDetails.email, setErrorMessage);
+  // }, [userDetails.email]);
+
+  // Validate age when date of birth changes
   useEffect(() => {
-    handleEmailBlur(userDetails.email, setErrorMessage);
-  }, [userDetails.email]);
+    if (!isAtLeast18YearsOld(userDetails.dateOfBirth)) {
+      setDateOfBirthError('You must be at least 18 years old to continue.');
+    } else {
+      setDateOfBirthError('');
+    }
+  }, [userDetails.dateOfBirth]);
 
-
+  // Check if all fields are filled and age is valid
+  const isFormValid = () => {
+    return (
+      userDetails.firstName &&
+      userDetails.lastName &&
+      userDetails.nickName &&
+      userDetails.phoneNumber &&
+      isAtLeast18YearsOld(userDetails.dateOfBirth)
+    );
+  };
 
   // Handler for input changes
   const handleChange = (name: string, value: string) => {
@@ -54,9 +82,27 @@ const TellUsMore = () => {
     }));
   };
 
+  // Handle date change from calendar modal
+  const taskCreatedDate = (date: any) => {
+    const convertDate = new Date(date.timestamp);
+    const formattedDate = convertDate.toISOString().split('T')[0];
+    handleChange('dateOfBirth', formattedDate);
+    closeModal();
+  };
 
-
- 
+  function OpenCalendarModal() {
+    openModal?.(
+      <CalendarModal
+        onDateSelected={taskCreatedDate}
+        closeModal={closeModal}
+        currentDate={userDetails.dateOfBirth || "2000-01-01"}
+      />,
+      {
+        transparent: true,
+        animationType: 'none',
+      }
+    );
+  }
 
   return (
     <KeyboardAwareScrollView
@@ -72,66 +118,65 @@ const TellUsMore = () => {
         </View>
         <View>
           <InputField
-            // placeholder={'Email Address'}
             label="Legal First Name"
-            onChangeText={(text: string) => handleChange('email', text)}
-            onBlur={() => setShowError(true)}
+            onChangeText={(text: string) => handleChange('firstName', text)}
+            value={userDetails.firstName}
+     
             keyboardType="email-address"
             leftIcon={undefined}
-            
             rightIcon={undefined}
           />
-           <InputField
-            // placeholder={'Email Address'}
+          <InputField
             label="Legal Last Name"
-            onChangeText={(text: string) => handleChange('email', text)}
-            onBlur={() => setShowError(true)}
-            keyboardType="email-address"
-            leftIcon={undefined}
-            rightIcon={undefined}
-          />
-           <InputField
-            // placeholder={'Email Address'}
-            label="Nick Name"
-            onChangeText={(text: string) => handleChange('email', text)}
-            onBlur={() => setShowError(true)}
-            keyboardType="email-address"
-            leftIcon={undefined}
-            rightIcon={undefined}
-       
+            onChangeText={(text: string) => handleChange('lastName', text)}
+            value={userDetails.lastName}
 
-          />
-          <InputField
-            // placeholder={'Email Address'}
-            label="Phone Number"
-            onChangeText={(text: string) => handleChange('email', text)}
-            onBlur={() => setShowError(true)}
             keyboardType="email-address"
             leftIcon={undefined}
             rightIcon={undefined}
-            value={"08079988544"}
           />
-    
           <InputField
-            // placeholder={'Password'}
-            label="Date of Birth"
-           
-            onChangeText={(text: string) => handleChange('password', text)}
+            label="Nick Name"
+            onChangeText={(text: string) => handleChange('nickName', text)}
+            value={userDetails.nickName}
+     
+            keyboardType="email-address"
             leftIcon={undefined}
-            rightIcon={"calendar"}
-            value={"userDetails.dateOfBirth"}
+            rightIcon={undefined}
           />
+          <InputField
+            label="Phone Number"
+            onChangeText={(text: string) => handleChange('phoneNumber', text)}
+            value={userDetails.phoneNumber}
+    
+            keyboardType="email-address"
+            leftIcon={undefined}
+            rightIcon={undefined}
+          />
+
+
+          <TouchableWithoutFeedback onPress={OpenCalendarModal}>
+            <View pointerEvents="box-only"> 
+              <InputField
+                label="Date of Birth"
+                value={userDetails.dateOfBirth}
+                editable={false}
+                leftIcon={undefined}
+                rightIcon={<Calendar width={24} height={24}/>}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+
+
+          {dateOfBirthError && (
+            <Text className="text-red-500 mt-1">{dateOfBirthError}</Text>
+          )}
         </View>
-       
-       
         <View className="flex-1 pt-[5%]">
           <AppButton
             label={'Continue'}
-            disabled={false}
-            onPress={() => 
-                // signUp(userDetails.email, userDetails.password)`
-                navigation.navigate('Approved')
-            }
+            disabled={!isFormValid()}
+            onPress={() => navigation.navigate('Approved')}
             loading={loading}
             style={{ backgroundColor: APP_COLOR.MAIN_GREEN }}
             textStyle={{ color: APP_COLOR.MAIN_WHITE }}
@@ -165,6 +210,6 @@ const TellUsMore = () => {
       </View>
     </KeyboardAwareScrollView>
   );
-};
+});
 
 export default TellUsMore;

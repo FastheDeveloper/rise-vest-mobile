@@ -30,10 +30,35 @@ export const handleEmailBlur = (email: string, setErrorMessage: (message: string
 };
 
 // Handle blur event for amount input field
-export const handleAmountBlur = (amount: number | string, setErrorMessage: (message: string) => void): void => {
-  if (!validateAmount(amount)) {
-    setErrorMessage('Invalid amount entered. Must be a number');
+import currency from 'currency.js';
+
+export const handleAmountBlur = (amount: string | number, setErrorMessage: (message: string) => void) => {
+  const cleanAmount = typeof amount === 'string' ? amount.replace(/,/g, '') : amount;
+  const numericAmount = Number(cleanAmount);
+
+  if (isNaN(numericAmount)) {
+    setErrorMessage('Invalid amount. Please enter a valid number.');
+  } else if (numericAmount <= 0) {
+    setErrorMessage('Amount must be greater than zero.');
   } else {
     setErrorMessage('');
   }
+
+  return numericAmount;
 };
+
+export function isAtLeast18YearsOld(dateString: string): boolean {
+  const birthDate = new Date(dateString);
+  const today = new Date();
+
+  // Calculate the difference in years
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  // Check if birthday hasn't occurred this year
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age >= 18;
+}
