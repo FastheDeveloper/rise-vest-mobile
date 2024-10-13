@@ -12,10 +12,11 @@ import LottieView from 'lottie-react-native';
 import AuthProvider from '~/providers/AuthProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
+import { ModalsProvider } from '~/providers/modalService';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 export default function App() {
   SplashScreen.preventAutoHideAsync();
 
-  
   const [loaded, error] = useFonts({
     [FONT_NAMES.DMSANS_BOLD]: require('~/lib/assets/fonts/DMSans-Bold.ttf'),
     [FONT_NAMES.DMSANS_MEDIUM]: require('~/lib/assets/fonts/DMSans-Medium.ttf'),
@@ -25,7 +26,6 @@ export default function App() {
     [FONT_NAMES.SPACEG_MEDIUM]: require('~/lib/assets/fonts/SpaceGrotesk-Medium.ttf'),
     [FONT_NAMES.SPACEG_REGULAR]: require('~/lib/assets/fonts/SpaceGrotesk-Regular.ttf'),
     [FONT_NAMES.SPACEG_SEMIBOLD]: require('~/lib/assets/fonts/SpaceGrotesk-SemiBold.ttf'),
-
   });
   const [animationPlayed, setAnimationPlayed] = useState(false);
 
@@ -57,14 +57,16 @@ export default function App() {
     return <LottieAnimation />;
   }
   return (
+    <SafeAreaProvider>
     <GestureHandlerRootView>
-        <NavigationContainer>
+      <NavigationContainer>
         <AuthProvider>
-
-<RootStack />
-</AuthProvider>
-        </NavigationContainer>
-
-  </GestureHandlerRootView>
-);
+          <ModalsProvider>
+          <RootStack />
+          </ModalsProvider>
+        </AuthProvider>
+      </NavigationContainer>
+    </GestureHandlerRootView>
+    </SafeAreaProvider>
+  );
 }

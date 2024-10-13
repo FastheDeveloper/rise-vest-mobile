@@ -5,7 +5,7 @@ import { Text, View, Animated, Image } from 'react-native';
 
 import { RootStackParamList } from '.';
 import { HeaderButton } from '../lib/components/HeaderButton';
-import One from '../screens/Dashboard/one';
+import One from '../screens/Dashboard/Home';
 import Two from '../screens/Dashboard/two';
 import { ActiveTabDot, FeedTabIcon, HomeTabIcon, PlansTabIcon, WalletTabIcon } from '~/lib/assets/TabIcons/Tabicons';
 

@@ -11,9 +11,9 @@ import { FONT_NAMES } from '~/core/constants/fontConstants';
 // Custom button component with support for loading state and optional icons
 interface AppButtonProps extends PressableProps {
   loading?: boolean;
-  leftIcon?: React.ComponentProps<typeof FontAwesome5>['name'];
+  leftIcon?: React.ComponentProps<typeof FontAwesome5>['name'] | React.ReactElement;
   label: string;
-  rightIcon?:  React.ComponentProps<typeof FontAwesome5>['name'];
+  rightIcon?: React.ComponentProps<typeof FontAwesome5>['name'] | React.ReactElement;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -27,6 +27,19 @@ const AppButton: React.FC<AppButtonProps> = ({
   textStyle, 
   ...pressableProps 
 }) => {
+  const renderIcon = (icon: React.ComponentProps<typeof FontAwesome5>['name'] | React.ReactElement, style: ViewStyle) => {
+    if (React.isValidElement(icon)) {
+      return <View style={style}>{icon}</View>;
+    } else if (typeof icon === 'string') {
+      return (
+        <View style={style}>
+          <FontAwesome5 name={icon} size={20} color={textStyle?.color} />
+        </View>
+      );
+    }
+    return null;
+  };
+
   // Render content based on loading state
   const content = loading ? (
     <View style={styles.loaderWrapper}>
@@ -34,18 +47,9 @@ const AppButton: React.FC<AppButtonProps> = ({
     </View>
   ) : (
     <>
-      {leftIcon && (
-        <View style={styles.leftIcon}>
-          <FontAwesome5 name={leftIcon} size={20} color={textStyle?.color} />
-
-        </View>
-      )}
+      {leftIcon && renderIcon(leftIcon, styles.leftIcon)}
       <Text style={[styles.buttonText, textStyle]}>{label}</Text>
-      {rightIcon && (
-        <View style={styles.rightIcon}>
-          <FontAwesome5 name={rightIcon} size={20} color={textStyle?.color} />
-        </View>
-      )}
+      {rightIcon && renderIcon(rightIcon, styles.rightIcon)}
     </>
   );
 

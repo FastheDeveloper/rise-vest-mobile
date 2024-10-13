@@ -12,6 +12,10 @@ import SignIn from '~/screens/Auth/SignIn';
 import Approved from '~/screens/Auth/Approved';
 import CreatePin from '~/screens/Auth/CreatePin';
 import PinApproved from '~/screens/Auth/PinApproved';
+import CreatePlan from '~/screens/Dashboard/CreatePlan';
+import PlanDetain from '~/screens/Dashboard/PlanDetain';
+import PlanReview from '~/screens/Dashboard/PlanReview';
+import PlanApproved from '~/screens/Auth/PlanApproved';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
@@ -23,6 +27,10 @@ export type RootStackParamList = {
   Approved:undefined;
   CreatePin:undefined;
   PinApproved:undefined;
+  CreatePlan:undefined;
+  PlanDetail:undefined;
+  PlanReview:undefined;
+  PlanApproved:undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -68,6 +76,30 @@ console.log('hasPin stack', hasPin);
         node: (
           <Fragment>
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen 
+              name="CreatePlan" 
+              component={CreatePlan} 
+              options={{
+                cardStyleInterpolator: ({ current, layouts }) => {
+                  return {
+                    cardStyle: {
+                      transform: [
+                        {
+                          translateY: current.progress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [layouts.screen.height, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  };
+                },
+              }}
+            />
+            <Stack.Screen name="PlanDetail" component={PlanDetain} />
+            <Stack.Screen name="PlanReview" component={PlanReview} />
+            <Stack.Screen name="PlanApproved" component={PlanApproved} />
+
             <Stack.Screen name="Modal" component={Modal} />
           </Fragment>
         ),
