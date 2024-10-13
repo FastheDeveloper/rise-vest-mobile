@@ -11,6 +11,7 @@ import TellUsMore from '~/screens/Auth/TellUsMore';
 import SignIn from '~/screens/Auth/SignIn';
 import Approved from '~/screens/Auth/Approved';
 import CreatePin from '~/screens/Auth/CreatePin';
+import PinApproved from '~/screens/Auth/PinApproved';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   TellUsMore:undefined;
   Approved:undefined;
   CreatePin:undefined;
+  PinApproved:undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -56,6 +58,8 @@ console.log('hasPin stack', hasPin);
         node: (
           <Fragment>
             <Stack.Screen name="CreatePin" component={CreatePin} />
+            <Stack.Screen name="PinApproved" component={PinApproved} />
+
           </Fragment>
         ),
       },

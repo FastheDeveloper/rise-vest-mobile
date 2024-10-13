@@ -6,10 +6,14 @@ import { APP_COLOR } from '~/core/constants/colorConstants';
 import { useAuth } from '~/providers/AuthProvider';
 import PinInput from '~/lib/components/PinInput';
 import CustomKeypad from '~/lib/components/CustomKeypad';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '~/navigation';
 
 const CreatePin = () => {
   const { top, bottom } = useSafeAreaInsets();
   const { setPin } = useAuth();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [pin, setLocalPin] = useState('');
 
   const handlePinChange = (newPin: string) => {
@@ -27,6 +31,7 @@ const CreatePin = () => {
           {
             text: 'Save',
             onPress: () => {
+            navigation.navigate('PinApproved')
               setPin(newPin);
               // Navigate to the next screen or show a success message
             },

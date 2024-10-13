@@ -15,7 +15,7 @@ import { ApprovedIcon } from '~/lib/assets/svgs/Svgs';
 
 const PinApproved = () => {
   const { top, bottom } = useSafeAreaInsets();
-  const { signUp, loading,setIsAuthenticated} = useAuth();
+  const { signUp, loading,setIsAuthenticated,setHasPin} = useAuth();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
  
@@ -50,7 +50,8 @@ const PinApproved = () => {
             onPress={() => 
               // signUp(userDetails.email, userDetails.password)`
             //   navigation.navigate('Approved')
-            setIsAuthenticated(true)
+            // setIsAuthenticated(true)
+            setHasPin(true)
             }
             loading={loading}
             style={{ 

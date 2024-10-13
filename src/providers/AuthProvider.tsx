@@ -65,7 +65,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const setPin = useCallback(async (pin: string) => {
     console.log('pin', pin);
-    setHasPin(true);
+    // setHasPin(true);
     await save(STORAGE_KEYS.HAS_PIN, pin);
 
   }, []);
