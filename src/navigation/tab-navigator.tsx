@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useRef, useEffect } from 'react';
-import { Text, View, Animated } from 'react-native';
+import { Text, View, Animated, Image } from 'react-native';
 
 import { RootStackParamList } from '.';
 import { HeaderButton } from '../lib/components/HeaderButton';
@@ -56,7 +56,11 @@ export default function TabLayout({ navigation }: Props) {
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: activeTabColor,
-        headerShown: false
+        headerShown: false,
+        tabBarStyle: {
+          paddingTop: 10, // Add top padding to all tabs
+          height: 90, // Increase the height to accommodate the padding
+        },
       }}>
       <Tab.Screen
         name="One"
@@ -113,7 +117,7 @@ export default function TabLayout({ navigation }: Props) {
           tabBarLabel: ({ focused }) => <TabTitle focused={focused} title="Profile" />,
           tabBarIcon: ({ focused, color }) => (
             <AnimatedIcon focused={focused}>
-              <FeedTabIcon width={22} height={22} color={color} />
+              <Image source={require('../lib/assets/images/profile.png')} style={{width:32,height:32}} />
             </AnimatedIcon>
           ),
         }}
