@@ -1,5 +1,5 @@
 import * as React from "react"
-import Svg, { SvgProps, Rect, Path } from "react-native-svg"
+import Svg, { SvgProps, Rect, Path, Circle } from "react-native-svg"
 export const ApprovedIcon = (props: SvgProps) => (
   <Svg fill="none" {...props}>
     <Rect
@@ -190,6 +190,86 @@ export const Info = (props: SvgProps) => (
     <Path
       fill="#0898A0"
       d="M11 9.41h2v-2h-2v2Zm1 11c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8Zm0-18a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1 15h2v-6h-2v6Z"
+    />
+  </Svg>
+)
+
+export const TransparentBack  = (props: SvgProps) => (
+  <Svg  fill="none" {...props}>
+    <Rect
+      width={36}
+      height={36}
+      fill="#000"
+      fillOpacity={0.4}
+      rx={18}
+    />
+    <Path
+      stroke="#fff"
+      strokeWidth={1.5}
+      d="M24.664 18H11.336m0 0L18 11.336M11.336 18 18 24.664"
+    />
+  </Svg>
+)
+
+export const SettingsIcon = (props: SvgProps) => (
+  <Svg  fill="none" {...props}>
+    <Rect
+      width={36}
+      height={36}
+      fill="#000"
+      fillOpacity={0.4}
+      rx={18}
+   
+    />
+    <Circle cx={18} cy={10.418} r={1.691} fill="#fff" />
+    <Circle cx={18} cy={18} r={1.691} fill="#fff" />
+    <Circle cx={18} cy={25.582} r={1.691} fill="#fff" />
+  </Svg>
+)
+
+export const SmallQuestion = (props: SvgProps) => (
+  <Svg fill="none" {...props}>
+    <Path
+      fill="#71879C"
+      d="M4.502 9.5C6.962 9.5 9 7.462 9 4.998 9 2.538 6.958.5 4.498.5S0 2.538 0 4.998C0 7.462 2.042 9.5 4.502 9.5Zm-.088-3.565c-.255 0-.394-.125-.394-.371v-.056c0-.436.246-.682.575-.91.404-.278.594-.431.594-.737 0-.33-.26-.562-.663-.562-.298 0-.516.148-.66.39-.143.171-.195.306-.46.306-.17 0-.338-.12-.338-.33 0-.078.014-.153.037-.232.126-.431.66-.793 1.453-.793.798 0 1.48.417 1.48 1.183 0 .548-.31.808-.76 1.11-.307.213-.47.371-.474.622v.05c-.01.186-.149.33-.39.33Zm.019 1.337c-.265 0-.506-.204-.506-.483 0-.278.236-.482.506-.482.269 0 .506.2.506.482 0 .283-.242.483-.506.483Z"
+    />
+  </Svg>
+)
+
+export const CaretDown  = (props: SvgProps) => (
+  <Svg  fill="none" {...props}>
+    <Rect
+      width={36}
+      height={36}
+      y={0.941}
+      fill="#4CD964"
+      fillOpacity={0.15}
+      rx={18}
+    />
+    <Path
+      stroke="#27BF41"
+      strokeWidth={1.5}
+      d="m22.642 14.3-9.284 9.283m0 0h8.2m-8.2 0v-8.2"
+    />
+  </Svg>
+)
+
+export const CaretUp = (props: SvgProps) => (
+  <Svg fill="none" {...props}>
+    <Rect
+      width={36}
+      height={36}
+      x={36}
+      y={36.941}
+      fill="#EB5757"
+      fillOpacity={0.15}
+      rx={18}
+      transform="rotate(180 36 36.941)"
+    />
+    <Path
+      stroke="#EB5757"
+      strokeWidth={1.5}
+      d="m13.358 23.583 9.284-9.283m0 0h-8.2m8.2 0v8.2"
     />
   </Svg>
 )

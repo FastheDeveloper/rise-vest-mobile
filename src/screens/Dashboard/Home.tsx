@@ -117,7 +117,7 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
         resizeMode="cover"
         className="flex-1">
          <StatusBar hidden={true} />
-         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+         <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={{ flexGrow: 1 }}>
      
         <View
           style={{
