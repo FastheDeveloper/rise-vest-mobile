@@ -16,6 +16,7 @@ import CreatePlan from '~/screens/Dashboard/CreatePlan';
 import PlanDetain from '~/screens/Dashboard/PlanDetain';
 import PlanReview from '~/screens/Dashboard/PlanReview';
 import PlanApproved from '~/screens/Auth/PlanApproved';
+import PlanDetails from '~/screens/Dashboard/PlanDetails';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
@@ -31,6 +32,7 @@ export type RootStackParamList = {
   PlanDetail:undefined;
   PlanReview:undefined;
   PlanApproved:undefined;
+  PlanDetailScreen:undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -99,7 +101,26 @@ console.log('hasPin stack', hasPin);
             <Stack.Screen name="PlanDetail" component={PlanDetain} />
             <Stack.Screen name="PlanReview" component={PlanReview} />
             <Stack.Screen name="PlanApproved" component={PlanApproved} />
-
+            <Stack.Screen 
+              name="PlanDetailScreen" 
+              component={PlanDetails} 
+              options={{
+                cardStyleInterpolator: ({ current, layouts }) => {
+                  return {
+                    cardStyle: {
+                      transform: [
+                        {
+                          translateY: current.progress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [layouts.screen.height, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  };
+                },
+              }}
+            />
             <Stack.Screen name="Modal" component={Modal} />
           </Fragment>
         ),

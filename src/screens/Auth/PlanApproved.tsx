@@ -49,8 +49,8 @@ const PlanApproved = () => {
             disabled={false}
             onPress={() => 
               // signUp(userDetails.email, userDetails.password)`
-            //   navigation.navigate('Approved')
-            setIsAuthenticated(true)
+              navigation.navigate('PlanDetailScreen')
+         
             }
             loading={loading}
             style={{ 
