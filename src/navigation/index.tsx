@@ -17,6 +17,9 @@ import PlanDetain from '~/screens/Dashboard/PlanDetain';
 import PlanReview from '~/screens/Dashboard/PlanReview';
 import PlanApproved from '~/screens/Auth/PlanApproved';
 import PlanDetails from '~/screens/Dashboard/PlanDetails';
+import AddFunds from '~/screens/Dashboard/AddFunds';
+import ChoosePlan from '~/screens/Dashboard/ChoosePlan';
+import ChooseBank from '~/screens/Auth/ChooseBank';
 
 export type RootStackParamList = {
   TabNavigator: undefined;
@@ -33,6 +36,9 @@ export type RootStackParamList = {
   PlanReview:undefined;
   PlanApproved:undefined;
   PlanDetailScreen:undefined;
+  AddFunds:undefined;
+  ChoosePlan:undefined;
+  ChooseBank:undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -121,6 +127,28 @@ console.log('hasPin stack', hasPin);
                 },
               }}
             />
+              <Stack.Screen 
+              name="AddFunds" 
+              component={AddFunds} 
+              options={{
+                cardStyleInterpolator: ({ current, layouts }) => {
+                  return {
+                    cardStyle: {
+                      transform: [
+                        {
+                          translateY: current.progress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [layouts.screen.height, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  };
+                },
+              }}
+            />
+            <Stack.Screen name="ChoosePlan" component={ChoosePlan} />
+            <Stack.Screen name="ChooseBank" component={ChooseBank} />
             <Stack.Screen name="Modal" component={Modal} />
           </Fragment>
         ),
