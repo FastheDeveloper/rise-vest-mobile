@@ -181,6 +181,7 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
               fontFamily: FONT_NAMES.DMSANS_SEMIBOLD,
               color: APP_COLOR.MAIN_TEAL,
             }}
+            onPress={()=>navigation.navigate('AddFunds')}
           />
 
           <View className="my-4 flex-1">
