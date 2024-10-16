@@ -14,7 +14,7 @@ import { RootStackParamList } from '~/navigation';
 
 const SignUp = () => {
   const { top, bottom } = useSafeAreaInsets();
-  const { signUp, loading } = useAuth();
+  const { signUp, loading, setUserSignup } = useAuth();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [userDetails, setUserDetails] = useState({
     email: '',
@@ -138,9 +138,13 @@ const SignUp = () => {
             label={'Sign Up'}
             disabled={!isFormValid()}
             onPress={() => 
-              // signUp(userDetails.email, userDetails.password)
-              navigation.navigate('TellUsMore')
-            }
+            {
+              setUserSignup({
+                email_address: userDetails.email,
+                password: userDetails.password,
+              });
+              navigation.navigate('TellUsMore');
+            }}
             loading={loading}
             style={{ backgroundColor: APP_COLOR.MAIN_GREEN }}
             textStyle={{ color: APP_COLOR.MAIN_WHITE }}

@@ -33,7 +33,13 @@ export type RootStackParamList = {
   PinApproved:undefined;
   CreatePlan:undefined;
   PlanDetail:undefined;
-  PlanReview:undefined;
+  PlanReview: {
+    planInfo: {
+      plan_name: string;
+      target_amount: number;
+      maturity_date: string;
+    };
+  };
   PlanApproved:undefined;
   PlanDetailScreen:undefined;
   AddFunds:undefined;

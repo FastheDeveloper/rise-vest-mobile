@@ -7,9 +7,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
 import AppButton from '~/lib/components/AppButton';
 import { AntDesign } from '@expo/vector-icons';
+import { useAuth } from '~/providers/AuthProvider';
 const PlanDetails = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { top, bottom } = useSafeAreaInsets();
+  const { createdPlan,userResponse } = useAuth();
   const target = '$20,053.90';
   return (
     <ScrollView 
@@ -27,8 +29,8 @@ const PlanDetails = () => {
               <TransparentBack width={36} height={36} />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="font-spaceg-semibold text-3xl text-white  ">Start a business</Text>
-              <Text className="font-spaceg-regular text-base text-white">for Kate Ventures</Text>
+              <Text className="font-spaceg-semibold text-3xl text-white  ">{createdPlan?.plan_name}</Text>
+              <Text className="font-spaceg-regular text-base text-white">for ${userResponse?.first_name} Ventures</Text>
             </View>
             <TouchableOpacity>
               <SettingsIcon width={36} height={36} />
@@ -37,7 +39,7 @@ const PlanDetails = () => {
         </ImageBackground>
         <View className=" my-8 items-center justify-center gap-4">
           <Text className="font-dmsans-regular text-xl text-[#71879C]">Plan Balance</Text>
-          <Text className="font-spaceg-semibold text-4xl text-[#012224]">$1000</Text>
+          <Text className="font-spaceg-semibold text-4xl text-[#012224]">${createdPlan?.total_returns}</Text>
           <View className="flex-row items-center justify-center gap-2">
             <Text className="font-spaceg-semibold text-xl text-[#012224]">~ ₦0.00</Text>
             <SmallQuestion width={9} height={9} />
@@ -45,11 +47,11 @@ const PlanDetails = () => {
         </View>
         <View className=" items-center justify-center gap-2">
           <Text className="font-dmsans-regular text-xl text-[#012224]">Gains</Text>
-          <Text className="font-spaceg-regular text-xl text-[#27BF41]">+$5,000.43 • +12.4% </Text>
+          <Text className="font-spaceg-regular text-xl text-[#27BF41]">+ ${createdPlan?.target_amount} • +12.4% </Text>
         </View>
         <View className=" flex-row items-center justify-between gap-2 p-4">
           <Text className="font-dmsans-regular text-xl text-[#71879C]">0.01 achieved</Text>
-          <Text className="font-spaceg-regular text-xl text-[#71879C]">Target: {target}</Text>
+          <Text className="font-spaceg-regular text-xl text-[#71879C]">Target: ${createdPlan?.target_amount}</Text>
         </View>
         <View className="mx-2 mb-6 h-[10px] rounded-full bg-gray-200 mx-4">
           <View className="h-[10px] rounded-full bg-teal-500 px-2" style={{ width: `5%` }} />

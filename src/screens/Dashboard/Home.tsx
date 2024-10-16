@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,16 +17,18 @@ import { APP_COLOR } from '~/core/constants/colorConstants';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
+import { Plan, useAuth } from '~/providers/AuthProvider';
 
 export default function TabOneScreen() {
   const insets = useSafeAreaInsets();
   const userName = 'Deborah';
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
+  const {userResponse,quotes,plans} = useAuth();
   const [cardIndex, setCardIndex] = useState(0);
   const cardData = [
-    { balance: '$10,000.00', gains: '0.21%' },
-    { balance: '$15,000.00', gains: '0.35%' },
-    { balance: '$8,000.00', gains: '-0.18%' },
+    { balance: userResponse?.total_balance, gains: '0.21%' },
+    { balance: userResponse?.total_balance, gains: '0.35%' },
+    { balance: userResponse?.total_balance, gains: '-0.18%' },
   ];
 const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
   const toggleBalanceVisibility = () => {
@@ -64,7 +66,7 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
           className="my-4 text-center font-spaceg-medium text-4xl text-[#333333]"
           entering={SlideInLeft.delay(200)}
           exiting={SlideOutRight}>
-          {isBalanceVisible ? data.balance : '$*****'}
+          {isBalanceVisible ? `$${data.balance?.toFixed(2)||0.00.toFixed(2)}` : '$*****'}
         </Animated.Text>
         <View className="my-6 h-[2px] w-[200px] bg-[#71879C40]" />
 
@@ -88,27 +90,48 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
     );
   }, [cardIndex, isBalanceVisible, toggleBalanceVisibility]);
 
-  const investmentPlans = [
-    {
-      image: require('../../lib/assets/images/plan1.jpeg'),
-      title: 'Build Wealth',
-      amount: '$188.25',
-      type: 'Mixed assets',
-    },
-    {
-      image: require('../../lib/assets/images/plan2.jpeg'),
-      title: 'Build Wealth',
-      amount: '$188.25',
-      type: 'Mixed assets',
-    },
-    {
-      image: require('../../lib/assets/images/plan3.jpeg'),
-      title: 'Build Wealth',
-      amount: '$188.25',
-      type: 'Mixed assets',
-    },
-  ];
-  // const investmentPlans=[]
+  interface DisplayPlan extends Plan {
+    image: any;
+    amount: string;
+    type: string;
+    title: string;
+  }
+
+  const [investmentPlans, setInvestmentPlans] = useState<DisplayPlan[]>([]);
+
+  useEffect(() => {
+    if (plans && plans.items && plans.items.length > 0) {
+      const images = [
+        require('../../lib/assets/images/plan1.jpeg'),
+        require('../../lib/assets/images/plan2.jpeg'),
+        require('../../lib/assets/images/plan3.jpeg'),
+      ];
+
+      const updatedPlans: DisplayPlan[] = plans.items.map((plan) => ({
+        ...plan,
+        image: images[Math.floor(Math.random() * images.length)],
+        amount: `$${plan.target_amount.toFixed(2)}`,
+        type: 'Mixed assets',
+        title: plan.plan_name,
+      }));
+
+      setInvestmentPlans(updatedPlans);
+    }
+  }, [plans]);
+
+  function getTimeOfDay(): string {
+    const currentHour = new Date().getHours();
+
+    if (currentHour >= 5 && currentHour < 12) {
+      return 'morning';
+    } else if (currentHour >= 12 && currentHour < 18) {
+      return 'afternoon';
+    } else if (currentHour >= 18 && currentHour < 22) {
+      return 'evening';
+    } else {
+      return 'evening';
+    }
+  }
 
   return (
 
@@ -130,14 +153,14 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
             <View>
               <View className="flex-row items-center">
                 <Text className="font-dmsans-regular text-lg text-APP_COLOR-MAIN_TEXT_DARK">
-                  Good morning{' '}
+                  Good {getTimeOfDay()}{' '}
                 </Text>
                 <Text className="font-dmsans-regular text-lg text-APP_COLOR-MAIN_TEXT_DARK">
                   ☀️
                 </Text>
               </View>
               <Text className="font-dmsans-semibold text-2xl text-APP_COLOR-MAIN_TEXT_DARK">
-                {userName}
+                {userResponse?.first_name} {userResponse?.last_name}
               </Text>
             </View>
             <View className="flex-row items-center justify-end gap-4">
@@ -208,7 +231,7 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 16 }}>
-              <Pressable onPress={()=>navigation.navigate('CreatePlan')}  className="h-[243px] w-[180px] items-center justify-center rounded-xl bg-[#71879C1A]">
+              <Pressable onPress={() => navigation.navigate('CreatePlan')} className="h-[243px] w-[180px] items-center justify-center rounded-xl bg-[#71879C1A]">
                 <PlusIcon width={43} height={43} />
                 <Text className="mx-4 mt-2 text-center font-dmsans-semibold text-lg text-[#333333]">
                   Create an investment plan
@@ -216,7 +239,7 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
               </Pressable>
               {investmentPlans.map((plan, index) => (
                 <ImageBackground
-                  key={index}
+                  key={plan.id}
                   source={plan.image}
                   className="h-[243px] w-[180px] overflow-hidden rounded-xl bg-white">
                   <View className="flex-1 justify-end p-4">
@@ -241,11 +264,11 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
                 <Text className="font-dmsans-semibold text-xl text-[#FFFFFF]">TODAY'S QUOTE</Text>
                 <View className="h-[2px] w-[30px] bg-[#FFFFFF] rounded-full my-4 " />
                 <Text className="font-dmsans-regular text-xl text-[#FFFFFF]">
-                We have no intention of rotating capital out of strong multi-year investments because they've recently done well or because 'growth' has out performed 'value'.
+              {quotes?.quote}
                 </Text>
                 <View className="flex-row items-center gap-2 my-4 justify-between">
                   <Text className="font-dmsans-bold text-xl text-[#FFFFFF]">
-                  Carl Sagan
+                  {quotes?.author}
                   </Text>
                   <ShareIcon width={43} height={43} color="#FFFFFF" />
                 </View>

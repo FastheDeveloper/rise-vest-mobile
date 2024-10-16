@@ -22,6 +22,11 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
   const [edittedAmount, setEdittedAmount] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
+  const [planInfo, setPlanInfo] = useState({
+    plan_name: "",
+    target_amount: 0,
+    maturity_date: ""
+  });
 
   const questions = [
     { label: 'What are you saving for?', state: goalName, setState: setGoalName },
@@ -40,18 +45,40 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     const numericAmount = handleAmountBlur(edittedAmount, setErrorMessage);
     if (!isNaN(numericAmount) && numericAmount > 0) {
       const formattedAmount = formatCurrency(numericAmount.toString());
-      setTargetAmount(formattedAmount);
-      setEdittedAmount(formattedAmount);
+      setTargetAmount(numericAmount.toString()); // Store the pure number
+      setEdittedAmount(formattedAmount); // Display the formatted amount
+      // Update planInfo immediately
+      setPlanInfo(prevState => ({
+        ...prevState,
+        target_amount: numericAmount
+      }));
     }
     setShowError(true);
   };
 
   // Clear error message and hide error on input focus
   const handleInputFocus = () => {
-    setEdittedAmount(targetAmount.replace(/,/g, ''));
+    setEdittedAmount(targetAmount); // Use the pure number for editing
     setErrorMessage('');
     setShowError(false);
   };
+
+  // Update planInfo when goalName changes
+  useEffect(() => {
+    setPlanInfo(prevState => ({
+      ...prevState,
+      plan_name: goalName
+    }));
+  }, [goalName]);
+
+  // Update planInfo when targetDate changes
+  useEffect(() => {
+    setPlanInfo(prevState => ({
+      ...prevState,
+      maturity_date: targetDate
+    }));
+  }, [targetDate]);
+
   // Handle date change from calendar modal
   const taskCreatedDate = (date: any) => {
     const convertDate = new Date(date.timestamp);
@@ -62,12 +89,15 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
   };
 
   function OpenCalendarModal() {
-    const today = new Date().toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
+    const today = new Date();
+    const oneYearFromToday = new Date(today.setFullYear(today.getFullYear() + 1));
+    const defaultDate = targetDate || oneYearFromToday.toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
+
     openModal?.(
       <CalendarModal
         onDateSelected={taskCreatedDate}
         closeModal={closeModal}
-        currentDate={targetDate || today}
+        currentDate={defaultDate}
       />,
       {
         transparent: true,
@@ -93,11 +123,10 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     if (currentQuestion < 3) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Log all answers after the last question
-      console.log('Goal Name:', goalName);
-      console.log('Target Amount:', targetAmount);
-      console.log('Target Date:', targetDate);
-      navigation.navigate('PlanReview');
+      // Log the planInfo state
+      console.log('Plan Info:', planInfo);
+      
+      navigation.navigate('PlanReview', { planInfo });
     }
   };
 

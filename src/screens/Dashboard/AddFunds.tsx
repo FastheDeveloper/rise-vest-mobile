@@ -7,12 +7,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import AppButton from '~/lib/components/AppButton';
+import { useAuth } from '~/providers/AuthProvider';
 
 const AddFunds = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const bottomSheetRef = useRef<BottomSheet>(null);
-
+  const { rates } = useAuth();
   // Variables for the bottom sheet
   const snapPoints = useMemo(() => ['80%'], []);
 
@@ -107,17 +108,17 @@ const AddFunds = () => {
               {
                 description: 'USD Buy Rate',
                 date: 'We buy US dollars at this rate',
-                amount: '₦490',
+                amount: `₦${rates?.buy_rate.toFixed(2)}`,
                 fee: '+$10',
               },
               {
                 description: 'USD Sell Rate',
                 date: 'The current value of your investments in Naira',
-                amount: '₦490',
+                amount: `₦${rates?.sell_rate.toFixed(2)}`,
                 fee: '+$10',
               },
             ].map((transaction, index) => (
-              <View>
+              <View key={index}>
                 <View key={index} className="my-4 flex-row items-start justify-between">
                   <View className="mr-4 flex-1 flex-row items-start">
                     <View className="ml-3 flex-1">
