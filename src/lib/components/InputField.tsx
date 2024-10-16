@@ -14,9 +14,10 @@ interface InputFieldProps extends TextInputProps {
   leftIcon?: FontAwesomeIconName | IconComponent;
   label?: string;
   rightIcon?: EntypoIconName | IconComponent;
+  children?: React.ReactNode;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ leftIcon, label, rightIcon, ...inputProps }) => {
+const InputField: React.FC<InputFieldProps> = ({ leftIcon, label, rightIcon, children, ...inputProps }) => {
   const [hide, setHide] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [hasValue, setHasValue] = useState(!!inputProps.value || false);
@@ -79,35 +80,46 @@ const InputField: React.FC<InputFieldProps> = ({ leftIcon, label, rightIcon, ...
           </View>
         )}
 
-        <TextInput
-          style={[
-            styles.input,
+        {children ? (
+          <View style={[
+            styles.childrenContainer,
             rightIcon || inputProps.secureTextEntry
               ? styles.inputWithRightIcon
               : styles.inputFullWidth,
-            !label && styles.inputWithoutLabel,
-            {
-              paddingBottom: label ? 15 : 0,
-            }
-          ]}
-          {...inputProps}
-          placeholder={!label ? inputProps.placeholder : undefined}
-          placeholderTextColor={APP_COLOR.PLACEHOLDER_DARK}
-          secureTextEntry={inputProps.secureTextEntry && !rightIcon ? hide : undefined}
-          onFocus={(e) => {
-            setIsFocused(true);
-            if (inputProps.onFocus) inputProps.onFocus(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            if (inputProps.onBlur) inputProps.onBlur(e);
-          }}
-          onChangeText={(text) => {
-            setHasValue(text.length > 0);
-            if (inputProps.onChangeText) inputProps.onChangeText(text);
-          }}
-          autoCapitalize="none"
-        />
+          ]}>
+            {children}
+          </View>
+        ) : (
+          <TextInput
+            style={[
+              styles.input,
+              rightIcon || inputProps.secureTextEntry
+                ? styles.inputWithRightIcon
+                : styles.inputFullWidth,
+              !label && styles.inputWithoutLabel,
+              {
+                paddingBottom: label ? 15 : 0,
+              }
+            ]}
+            {...inputProps}
+            placeholder={!label ? inputProps.placeholder : undefined}
+            placeholderTextColor={APP_COLOR.PLACEHOLDER_DARK}
+            secureTextEntry={inputProps.secureTextEntry && !rightIcon ? hide : undefined}
+            onFocus={(e) => {
+              setIsFocused(true);
+              if (inputProps.onFocus) inputProps.onFocus(e);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              if (inputProps.onBlur) inputProps.onBlur(e);
+            }}
+            onChangeText={(text) => {
+              setHasValue(text.length > 0);
+              if (inputProps.onChangeText) inputProps.onChangeText(text);
+            }}
+            autoCapitalize="none"
+          />
+        )}
 
         {(rightIcon || inputProps.secureTextEntry) && (
           <View style={styles.rightIcon}>
@@ -189,5 +201,9 @@ const styles = StyleSheet.create({
   },
   inputWithoutLabel: {
     paddingTop: 0,
+  },
+  childrenContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
 });

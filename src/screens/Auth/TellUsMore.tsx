@@ -1,5 +1,5 @@
 import { Keyboard, Text, TouchableWithoutFeedback, View } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { APP_COLOR } from '~/core/constants/colorConstants';
@@ -15,6 +15,7 @@ import { Calendar } from '~/lib/assets/svgs/Svgs';
 import { withModal } from '~/providers/modalService';
 import { CalendarModal } from '~/lib/components/Calendar';
 import { isAtLeast18YearsOld } from '~/lib/utils/fieldValidators';
+import PhoneInput from 'react-native-phone-number-input';
 
 const TellUsMore = withModal(({ openModal, closeModal }) => {
   const eighteenYearsAgo = new Date();
@@ -27,10 +28,10 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
     firstName: '',
     lastName: '',
     nickName: '',
-    phoneNumber: '',
+    phoneNumber: ' ',
     dateOfBirth: today,
   });
-
+  const phoneInput = useRef<PhoneInput>(null);
   const [dateOfBirthError, setDateOfBirthError] = useState('');
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
@@ -135,13 +136,55 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
           />
           <InputField
             label="Phone Number"
-            onChangeText={(text: string) => handleChange('phoneNumber', text)}
             value={userDetails.phoneNumber}
-            keyboardType="email-address"
+            editable={false}
+            keyboardType="phone-pad"
             leftIcon={undefined}
             rightIcon={undefined}
-          />
+            style={{
+              width: '100%',
+              height: 100,
+            }}
+          >
+            <PhoneInput
+              ref={phoneInput}
+              defaultValue={userDetails.phoneNumber}
+              defaultCode="NG"
+              layout="first"
+              onChangeText={(text) => {
+                handleChange('phoneNumber', text);
+              }}
+              onChangeFormattedText={(text) => {
+                handleChange('phoneNumber', text);
+              }}
+              
+           
+              containerStyle={{
+                width: '100%',
+             marginVertical:5,
 
+              }}
+              textContainerStyle={{
+                width: '100%',
+                height: 50,
+                backgroundColor:'white'
+                // paddingVertical:10
+              }}
+              codeTextStyle={{
+                color: 'black',
+                fontSize: 16,
+              }}
+        
+              textInputStyle={{
+                color: 'black',
+                fontSize: 16,
+                marginTop:1
+              }}
+              
+            />
+          </InputField>
+
+          
           <TouchableWithoutFeedback onPress={OpenCalendarModal}>
             <View pointerEvents="box-only">
               <InputField
