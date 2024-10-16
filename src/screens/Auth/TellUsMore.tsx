@@ -21,7 +21,7 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
   const today = eighteenYearsAgo.toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
   const { top, bottom } = useSafeAreaInsets();
-  const { signUp, loading } = useAuth();
+  const { signUp, loading,userSignup,setUserSignup } = useAuth();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [userDetails, setUserDetails] = useState({
     firstName: '',
@@ -33,7 +33,7 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [dateOfBirthError, setDateOfBirthError] = useState('');
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
+console.log(userSignup)
   // Listeners for keyboard visibility to adjust layout
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
@@ -163,6 +163,7 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
                 editable={false}
                 leftIcon={undefined}
                 rightIcon={<Calendar width={24} height={24}/>}
+
               />
             </View>
           </TouchableWithoutFeedback>
@@ -176,7 +177,24 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
           <AppButton
             label={'Continue'}
             disabled={!isFormValid()}
-            onPress={() => navigation.navigate('Approved')}
+            onPress={async () => {
+              const updatedUserSignup = {
+                ...userSignup,
+                first_name: userDetails.firstName,
+                last_name: userDetails.lastName,
+                date_of_birth: userDetails.dateOfBirth,
+              };
+              
+              setUserSignup(updatedUserSignup);
+
+              try {
+                await signUp(updatedUserSignup);
+                navigation.navigate('SignIn');
+              } catch (error) {
+                console.error('Error during sign up:', error);
+                // Handle error (e.g., show error message to user)
+              }
+            }}
             loading={loading}
             style={{ backgroundColor: APP_COLOR.MAIN_GREEN }}
             textStyle={{ color: APP_COLOR.MAIN_WHITE }}

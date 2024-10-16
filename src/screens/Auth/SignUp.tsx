@@ -14,7 +14,7 @@ import { RootStackParamList } from '~/navigation';
 
 const SignUp = () => {
   const { top, bottom } = useSafeAreaInsets();
-  const { signUp, loading } = useAuth();
+  const { signUp, loading, setUserSignup } = useAuth();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [userDetails, setUserDetails] = useState({
     email: '',
@@ -46,13 +46,10 @@ const SignUp = () => {
 
   // Form validation function
   const isFormValid = () => {
-    const passwordValidation = isPasswordValid(userDetails.password);
     return (
       validateEmail(userDetails.email) &&
       allFieldsFilled(userDetails) &&
-      passwordValidation.minLength &&
-      passwordValidation.hasUpperCase &&
-      passwordValidation.hasSpecialChar
+      isPasswordValid(userDetails.password)
     );
   };
 
@@ -71,13 +68,9 @@ const SignUp = () => {
   };
 
   const isPasswordValid = (password: string) => {
-    const minLength = password.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*?]/.test(password);
-    return { minLength, hasUpperCase, hasSpecialChar };
+    const regex = /^(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
   };
-
-  const passwordValidation = isPasswordValid(userDetails.password);
 
   return (
     <KeyboardAwareScrollView
@@ -119,9 +112,10 @@ const SignUp = () => {
        
         <View className="flex-col justify-start items-start mx-[2%] my-[3%]">
           {[
-            { condition: passwordValidation.minLength, text: 'Minimum of 8 characters' },
-            { condition: passwordValidation.hasUpperCase, text: 'One UPPERCASE character' },
-            { condition: passwordValidation.hasSpecialChar, text: 'One unique character (e.g: !@#$%^&*?)' },
+            { condition: userDetails.password.length >= 8, text: 'Minimum of 8 characters' },
+            { condition: /[A-Z]/.test(userDetails.password), text: 'One UPPERCASE character' },
+            { condition: /[@$!%*?&]/.test(userDetails.password), text: 'One special character (@$!%*?&)' },
+            { condition: /^[A-Za-z\d@$!%*?&]+$/.test(userDetails.password), text: 'Only letters, numbers, and special characters (@$!%*?&)' },
           ].map((item, index) => (
             <View key={index} className="flex-row items-center mb-2">
               <Ionicons
@@ -138,9 +132,13 @@ const SignUp = () => {
             label={'Sign Up'}
             disabled={!isFormValid()}
             onPress={() => 
-              // signUp(userDetails.email, userDetails.password)
-              navigation.navigate('TellUsMore')
-            }
+            {
+              setUserSignup({
+                email_address: userDetails.email,
+                password: userDetails.password,
+              });
+              navigation.navigate('TellUsMore');
+            }}
             loading={loading}
             style={{ backgroundColor: APP_COLOR.MAIN_GREEN }}
             textStyle={{ color: APP_COLOR.MAIN_WHITE }}

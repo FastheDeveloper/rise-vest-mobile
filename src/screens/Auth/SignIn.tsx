@@ -117,8 +117,8 @@ const SignIn = () => {
             label={'Sign In'}
             disabled={!isFormValid()}
             onPress={() => 
-              // signIn(userDetails.email, userDetails.password)
-              setIsAuthenticated(true)
+              signIn(userDetails.email, userDetails.password)
+              // setIsAuthenticated(true)
             }
             loading={loading}
             style={{ backgroundColor: APP_COLOR.MAIN_GREEN }}

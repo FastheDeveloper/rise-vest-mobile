@@ -7,10 +7,38 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
 import AppButton from '~/lib/components/AppButton';
 import { AntDesign } from '@expo/vector-icons';
+import { useAuth } from '~/providers/AuthProvider';
+import currency from 'currency.js';
+
 const PlanDetails = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { top, bottom } = useSafeAreaInsets();
-  const target = '$20,053.90';
+  const { createdPlan,userResponse,rates ,} = useAuth();
+  const formatCurrency = (value: string) => {
+    return currency(value || 0, { precision: 2, symbol: '' }).format();
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+
+    let dayWithSuffix = day.toString();
+    if (day >= 11 && day <= 13) {
+      dayWithSuffix += 'th';
+    } else {
+      switch (day % 10) {
+        case 1: dayWithSuffix += 'st'; break;
+        case 2: dayWithSuffix += 'nd'; break;
+        case 3: dayWithSuffix += 'rd'; break;
+        default: dayWithSuffix += 'th';
+      }
+    }
+
+    return `${dayWithSuffix} ${month} ${year}`;
+  };
+
   return (
     <ScrollView 
       showsVerticalScrollIndicator={false} 
@@ -21,14 +49,14 @@ const PlanDetails = () => {
         <ImageBackground
           source={require('../../lib/assets/images/bg.jpg')}
           style={{ paddingTop: top}}
-          className="bg-white px-4 ">
+          className="bg-white px-4 pb-8 ">
           <View className="flex-row items-center justify-between ">
             <TouchableOpacity onPress={() => navigation.navigate('TabNavigator')}>
               <TransparentBack width={36} height={36} />
             </TouchableOpacity>
             <View className="flex-1 items-center">
-              <Text className="font-spaceg-semibold text-3xl text-white  ">Start a business</Text>
-              <Text className="font-spaceg-regular text-base text-white">for Kate Ventures</Text>
+              <Text className="font-spaceg-semibold text-3xl text-white  ">{createdPlan?.plan_name}</Text>
+              <Text className="font-spaceg-regular text-base text-white">for {userResponse?.first_name} Ventures</Text>
             </View>
             <TouchableOpacity>
               <SettingsIcon width={36} height={36} />
@@ -37,7 +65,7 @@ const PlanDetails = () => {
         </ImageBackground>
         <View className=" my-8 items-center justify-center gap-4">
           <Text className="font-dmsans-regular text-xl text-[#71879C]">Plan Balance</Text>
-          <Text className="font-spaceg-semibold text-4xl text-[#012224]">$1000</Text>
+          <Text className="font-spaceg-semibold text-4xl text-[#012224]">${formatCurrency(createdPlan?.total_returns.toString() || '0' ) }</Text>
           <View className="flex-row items-center justify-center gap-2">
             <Text className="font-spaceg-semibold text-xl text-[#012224]">~ ₦0.00</Text>
             <SmallQuestion width={9} height={9} />
@@ -45,11 +73,11 @@ const PlanDetails = () => {
         </View>
         <View className=" items-center justify-center gap-2">
           <Text className="font-dmsans-regular text-xl text-[#012224]">Gains</Text>
-          <Text className="font-spaceg-regular text-xl text-[#27BF41]">+$5,000.43 • +12.4% </Text>
+          <Text className="font-spaceg-regular text-xl text-[#27BF41]">+ $0.00 • +12.4% </Text>
         </View>
         <View className=" flex-row items-center justify-between gap-2 p-4">
           <Text className="font-dmsans-regular text-xl text-[#71879C]">0.01 achieved</Text>
-          <Text className="font-spaceg-regular text-xl text-[#71879C]">Target: {target}</Text>
+          <Text className="font-spaceg-regular text-xl text-[#71879C]">Target: ${formatCurrency(createdPlan?.target_amount.toString() || '0' ) }</Text>
         </View>
         <View className="mx-2 mb-6 h-[10px] rounded-full bg-gray-200 mx-4">
           <View className="h-[10px] rounded-full bg-teal-500 px-2" style={{ width: `5%` }} />
@@ -60,6 +88,8 @@ const PlanDetails = () => {
         <View className=' items-center justify-center mt-8 '>
           <AppButton label='+ Fund plan'
     //    onPress={() => navigation.navigate('CreatePlan')} 
+    onPress={()=>navigation.navigate('AddFunds')}
+
             style={{backgroundColor: '#71879C1A', width: '90%'}}
             textStyle={{color: '#0898A0'}}
           />
@@ -68,32 +98,32 @@ const PlanDetails = () => {
         </View>
         <View className='flex-row items-center justify-between gap-2 flex-1  p-4'>
           <Text className='font-dmsans-regular text-xl text-[#71879C]'>Total earnings</Text>
-          <Text className='font-spaceg-regular text-xl text-[#222222]'>$12,000.09</Text>
+          <Text className='font-spaceg-regular text-xl text-[#222222]'>${formatCurrency(createdPlan?.total_returns.toString() || '0' ) }</Text>
         </View>
         <View className='h-[1px] w-[90%] bg-[#E0E0E0] my-4'/>
         <View className='flex-row items-center justify-between gap-2 flex-1  p-4'>
           <Text className='font-dmsans-regular text-xl text-[#71879C]'>Current earnings</Text>
-          <Text className='font-spaceg-regular text-xl text-[#222222]'>$12,000.09</Text>
+          <Text className='font-spaceg-regular text-xl text-[#222222]'>${formatCurrency(createdPlan?.returns.toString() || '0' ) }</Text>
         </View>
         <View className='h-[1px] w-[90%] bg-[#E0E0E0] my-4'/>
         <View className='flex-row items-center justify-between gap-2 flex-1  p-4'>
           <Text className='font-dmsans-regular text-xl text-[#71879C]'>Deposit value</Text>
-          <Text className='font-spaceg-regular text-xl text-[#222222]'>$50,543.05</Text>
+          <Text className='font-spaceg-regular text-xl text-[#222222]'>${formatCurrency(createdPlan?.invested_amount.toString() || '0' ) }</Text>
         </View>
         <View className='h-[1px] w-[90%] bg-[#E0E0E0] my-4'/>
         <View className='flex-row items-center justify-between gap-2 flex-1  p-4'>
-          <Text className='font-dmsans-regular text-xl text-[#71879C]'>Balance in Naira (*₦505)</Text>
-          <Text className='font-spaceg-regular text-xl text-[#222222]'>₦31,918,837.5</Text>  
+          <Text className='font-dmsans-regular text-xl text-[#71879C]'>Balance in Naira (*₦{formatCurrency(rates?.buy_rate.toString() || '0' ) })</Text>
+              <Text className='font-spaceg-regular text-xl text-[#222222]'>₦{formatCurrency(userResponse?.total_balance.toString() || '0' ) }</Text>  
         </View>
         <View className='h-[1px] w-[90%] bg-[#E0E0E0] my-4'/>
         <View className='flex-row items-center justify-between gap-2 flex-1  p-4'>
           <Text className='font-dmsans-regular text-xl text-[#71879C]'>Plan created on</Text>
-          <Text className='font-spaceg-regular text-xl text-[#222222]'>23rd July, 2019</Text>  
+          <Text className='font-spaceg-regular text-xl text-[#222222]'>{formatDate(createdPlan?.created_at || '')}</Text>  
         </View>
         <View className='h-[1px] w-[90%] bg-[#E0E0E0] my-4'/>
         <View className='flex-row items-center justify-between gap-2 flex-1 mb-12  p-4'>
           <Text className='font-dmsans-regular text-xl text-[#71879C]'>Maturity date</Text>
-          <Text className='font-spaceg-regular text-xl text-[#222222]'>24th July 2022</Text>  
+          <Text className='font-spaceg-regular text-xl text-[#222222]'>{formatDate(createdPlan?.maturity_date || '')}</Text>  
         </View>
         <View className="flex-row items-center justify-between px-4 pb-8">
           <Text className="font-spaceg-medium text-2xl text-APP_COLOR-MAIN_TEXT_DARK">

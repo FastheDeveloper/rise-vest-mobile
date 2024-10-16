@@ -8,6 +8,7 @@ import { HeaderButton } from '../lib/components/HeaderButton';
 import One from '../screens/Dashboard/Home';
 import Two from '../screens/Dashboard/two';
 import { ActiveTabDot, FeedTabIcon, HomeTabIcon, PlansTabIcon, WalletTabIcon } from '~/lib/assets/TabIcons/Tabicons';
+import Profile from '~/screens/Dashboard/Profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -112,7 +113,7 @@ export default function TabLayout({ navigation }: Props) {
       />
         <Tab.Screen
         name="Profile"
-        component={Two}
+        component={Profile}
         options={{
           tabBarLabel: ({ focused }) => <TabTitle focused={focused} title="Profile" />,
           tabBarIcon: ({ focused, color }) => (

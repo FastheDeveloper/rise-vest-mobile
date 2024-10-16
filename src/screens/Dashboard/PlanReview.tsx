@@ -5,11 +5,19 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
 import AppButton from '~/lib/components/AppButton';
-
-const PlanReview = () => {
+import currency from 'currency.js';
+import { useAuth } from '~/providers/AuthProvider';
+import Toast from 'react-native-toast-message';
+const PlanReview = ({ route }: { route: { params: { planInfo: any } } }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const { planInfo } = route.params;
+  const { authToken, createPlan, loading } = useAuth();
+  const formatCurrency = (value: string) => {
+    return currency(value || 0, { precision: 2, symbol: '' }).format();
+  };
+
   return (
-      <SafeAreaView className="h-full w-full bg-white ">
+    <SafeAreaView className="h-full w-full bg-white ">
         <ScrollView>    
       <View className="flex-row items-center justify-between p-4">
         <TouchableOpacity
@@ -24,9 +32,9 @@ const PlanReview = () => {
       </View>
       <View className="flex-1 items-center ">
         <View className="flex-col items-center gap-2">
-          <Text className="text-md font-dmsans-regular text-[#71879C]">Kate Ventures</Text>
-          <Text className="font-spaceg-semibold text-3xl">$10,930.75</Text>
-          <Text className="text-md font-dmsans-regular text-[#333333]">by 20 June 2021</Text>
+          <Text className="text-md font-dmsans-regular text-[#71879C]">{planInfo.plan_name}</Text>
+          <Text className="font-spaceg-semibold text-3xl">${formatCurrency(planInfo.target_amount)}</Text>
+          <Text className="text-md font-dmsans-regular text-[#333333]">by {planInfo.maturity_date}</Text>
         </View>
         <View className="my-8  items-center">
           <Image
@@ -36,7 +44,7 @@ const PlanReview = () => {
         </View>
         <View className="w-full flex-row justify-between items-center p-4  ">
           <Text className="text-lg font-dmsans-regular text-[#71879C]">Estimated monthly investment</Text>
-          <Text className="text-lg font-dmsans-regular text-[#333333]">$10,930.75</Text>
+          <Text className="text-lg font-dmsans-regular text-[#333333]">${formatCurrency(planInfo.target_amount)}</Text>
         </View>
         <View className='h-[1px] w-[90%] bg-[#E0E0E0] my-4'/>
 
@@ -49,10 +57,21 @@ const PlanReview = () => {
       <View className="flex-1 items-center justify-center w-full">
       <AppButton
       label="Agree & Continue"
-      onPress={() => {
-  
-        navigation.navigate('PlanApproved');
+      onPress={async () => {
+  console.log('planInfo', planInfo);
+        
+     await     createPlan( planInfo).then(() => {
+            navigation.navigate('PlanApproved');
+          }).catch((error) => {
+           Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'There was an error creating your plan. Please try again.'
+          });
+          });
+        
       }}
+      loading={loading}
       style={{width:'90%', marginBottom:20}}
       />
       <AppButton

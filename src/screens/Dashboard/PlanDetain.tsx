@@ -22,6 +22,12 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
   const [edittedAmount, setEdittedAmount] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
+  const [planInfo, setPlanInfo] = useState({
+    plan_name: "",
+    target_amount: 0,
+    maturity_date: ""
+  });
+  const [amountValid, setAmountValid] = useState(false);
 
   const questions = [
     { label: 'What are you saving for?', state: goalName, setState: setGoalName },
@@ -35,23 +41,58 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     return currency(value || 0, { precision: 2, symbol: '' }).format();
   };
 
+  const handleAmountChange = (text: string) => {
+    const numericAmount = parseFloat(text.replace(/[^0-9.]/g, ''));
+    setEdittedAmount(text);
+    setTargetAmount(isNaN(numericAmount) ? '' : numericAmount.toString());
+    setAmountValid(numericAmount > 50);
+    setPlanInfo(prevState => ({
+      ...prevState,
+      target_amount: isNaN(numericAmount) ? 0 : numericAmount
+    }));
+    setErrorMessage('');
+    setShowError(false);
+  };
+
   // Format amount on blur and show error
   const handleBlurFormat = () => {
     const numericAmount = handleAmountBlur(edittedAmount, setErrorMessage);
     if (!isNaN(numericAmount) && numericAmount > 0) {
       const formattedAmount = formatCurrency(numericAmount.toString());
-      setTargetAmount(formattedAmount);
+      setTargetAmount(numericAmount.toString());
       setEdittedAmount(formattedAmount);
+      setAmountValid(numericAmount > 50);
+    } else {
+      setAmountValid(false);
     }
     setShowError(true);
   };
 
-  // Clear error message and hide error on input focus
+  // Clear input and hide error on input focus
   const handleInputFocus = () => {
-    setEdittedAmount(targetAmount.replace(/,/g, ''));
+    setEdittedAmount('');
+    setTargetAmount('');
     setErrorMessage('');
     setShowError(false);
+    setAmountValid(false);
   };
+
+  // Update planInfo when goalName changes
+  useEffect(() => {
+    setPlanInfo(prevState => ({
+      ...prevState,
+      plan_name: goalName
+    }));
+  }, [goalName]);
+
+  // Update planInfo when targetDate changes
+  useEffect(() => {
+    setPlanInfo(prevState => ({
+      ...prevState,
+      maturity_date: targetDate
+    }));
+  }, [targetDate]);
+
   // Handle date change from calendar modal
   const taskCreatedDate = (date: any) => {
     const convertDate = new Date(date.timestamp);
@@ -62,12 +103,15 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
   };
 
   function OpenCalendarModal() {
-    const today = new Date().toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
+    const today = new Date();
+    const oneYearFromToday = new Date(today.setFullYear(today.getFullYear() + 1));
+    const defaultDate = targetDate || oneYearFromToday.toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
+
     openModal?.(
       <CalendarModal
         onDateSelected={taskCreatedDate}
         closeModal={closeModal}
-        currentDate={targetDate || today}
+        currentDate={defaultDate}
       />,
       {
         transparent: true,
@@ -93,11 +137,10 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     if (currentQuestion < 3) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Log all answers after the last question
-      console.log('Goal Name:', goalName);
-      console.log('Target Amount:', targetAmount);
-      console.log('Target Date:', targetDate);
-      navigation.navigate('PlanReview');
+      // Log the planInfo state
+      console.log('Plan Info:', planInfo);
+      
+      navigation.navigate('PlanReview', { planInfo });
     }
   };
 
@@ -136,7 +179,7 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
       <InputField
         className="flex-1 h-12 text-base"
         value={currentQuestionData.state}
-        onChangeText={currentQuestionData.setState}
+        onChangeText={currentQuestion === 2 ? handleAmountChange : currentQuestionData.setState}
         leftIcon={currentQuestion === 2 ? <Naira width={24} height={24}/> : undefined}
         keyboardType={currentQuestion === 2 ? 'numeric' : 'default'}
         onBlur={currentQuestion === 2 ? handleBlurFormat : undefined}
@@ -173,7 +216,10 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
         <View className='my-4'/>
         <AppButton
           label="Continue"
-          disabled={!currentQuestionData.state || (currentQuestion === 2 && !!errorMessage)}
+          disabled={
+            !currentQuestionData.state || 
+            (currentQuestion === 2 && !amountValid)
+          }
           onPress={handleNext}
         />
       </View>
