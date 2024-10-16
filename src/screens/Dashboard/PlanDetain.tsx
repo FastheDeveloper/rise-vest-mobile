@@ -14,7 +14,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '~/navigation';
 
 const PlanDetain = withModal(({ openModal, closeModal }) => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [goalName, setGoalName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
@@ -23,9 +23,9 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
   const [planInfo, setPlanInfo] = useState({
-    plan_name: "",
+    plan_name: '',
     target_amount: 0,
-    maturity_date: ""
+    maturity_date: '',
   });
   const [amountValid, setAmountValid] = useState(false);
 
@@ -46,15 +46,14 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     setEdittedAmount(text);
     setTargetAmount(isNaN(numericAmount) ? '' : numericAmount.toString());
     setAmountValid(numericAmount > 50);
-    setPlanInfo(prevState => ({
+    setPlanInfo((prevState) => ({
       ...prevState,
-      target_amount: isNaN(numericAmount) ? 0 : numericAmount
+      target_amount: isNaN(numericAmount) ? 0 : numericAmount,
     }));
     setErrorMessage('');
     setShowError(false);
   };
 
-  // Format amount on blur and show error
   const handleBlurFormat = () => {
     const numericAmount = handleAmountBlur(edittedAmount, setErrorMessage);
     if (!isNaN(numericAmount) && numericAmount > 0) {
@@ -68,7 +67,6 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     setShowError(true);
   };
 
-  // Clear input and hide error on input focus
   const handleInputFocus = () => {
     setEdittedAmount('');
     setTargetAmount('');
@@ -77,27 +75,24 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     setAmountValid(false);
   };
 
-  // Update planInfo when goalName changes
   useEffect(() => {
-    setPlanInfo(prevState => ({
+    setPlanInfo((prevState) => ({
       ...prevState,
-      plan_name: goalName
+      plan_name: goalName,
     }));
   }, [goalName]);
 
-  // Update planInfo when targetDate changes
   useEffect(() => {
-    setPlanInfo(prevState => ({
+    setPlanInfo((prevState) => ({
       ...prevState,
-      maturity_date: targetDate
+      maturity_date: targetDate,
     }));
   }, [targetDate]);
 
-  // Handle date change from calendar modal
   const taskCreatedDate = (date: any) => {
     const convertDate = new Date(date.timestamp);
     console.log(convertDate);
-    const formattedDate = convertDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+    const formattedDate = convertDate.toISOString().split('T')[0];
     setTargetDate(formattedDate);
     closeModal();
   };
@@ -105,7 +100,7 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
   function OpenCalendarModal() {
     const today = new Date();
     const oneYearFromToday = new Date(today.setFullYear(today.getFullYear() + 1));
-    const defaultDate = targetDate || oneYearFromToday.toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
+    const defaultDate = targetDate || oneYearFromToday.toISOString().split('T')[0];
 
     openModal?.(
       <CalendarModal
@@ -137,9 +132,8 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     if (currentQuestion < 3) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Log the planInfo state
       console.log('Plan Info:', planInfo);
-      
+
       navigation.navigate('PlanReview', { planInfo });
     }
   };
@@ -164,10 +158,10 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
         <TouchableWithoutFeedback onPress={handleInputPress}>
           <View pointerEvents="box-only">
             <InputField
-              className="flex-1 h-12 text-base"
+              className="h-12 flex-1 text-base"
               value={currentQuestionData.state}
               onChangeText={currentQuestionData.setState}
-              rightIcon={<Calendar width={24} height={24}/>}
+              rightIcon={<Calendar width={24} height={24} />}
               editable={false}
             />
           </View>
@@ -177,10 +171,10 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
 
     return (
       <InputField
-        className="flex-1 h-12 text-base"
+        className="h-12 flex-1 text-base"
         value={currentQuestionData.state}
         onChangeText={currentQuestion === 2 ? handleAmountChange : currentQuestionData.setState}
-        leftIcon={currentQuestion === 2 ? <Naira width={24} height={24}/> : undefined}
+        leftIcon={currentQuestion === 2 ? <Naira width={24} height={24} /> : undefined}
         keyboardType={currentQuestion === 2 ? 'numeric' : 'default'}
         onBlur={currentQuestion === 2 ? handleBlurFormat : undefined}
         onFocus={currentQuestion === 2 ? handleInputFocus : undefined}
@@ -190,40 +184,41 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
 
   return (
     <KeyboardAwareScrollView className="bg-white ">
-    <SafeAreaView className="flex-1 bg-white ">
-      <View className="p-4 flex-row items-center justify-between">
-        <TouchableOpacity onPress={handleBack} className="mb-2">
-          <Back  width={36} height={36} />
-        </TouchableOpacity>
-        <Text className="text-2xl font-spaceg-semibold">{getHeaderTitle()}</Text>
-        <View />
-      </View>
-
-      <View className="flex-1 p-4">
-        <Text className="text-xl font-dmsans-semibold text-[#71879C] mb-8 px-2">Question {currentQuestion} of 3</Text>
-        <View className="h-[10px] bg-gray-200 rounded-full mb-6 mx-2">
-          <View 
-            className="h-[10px] bg-teal-500 rounded-full px-2" 
-            style={{ width: `${(currentQuestion / 3) * 100}%` }} 
-          />
+      <SafeAreaView className="flex-1 bg-white ">
+        <View className="flex-row items-center justify-between p-4">
+          <TouchableOpacity onPress={handleBack} className="mb-2">
+            <Back width={36} height={36} />
+          </TouchableOpacity>
+          <Text className="font-spaceg-semibold text-2xl">{getHeaderTitle()}</Text>
+          <View />
         </View>
 
-        <Text className="text-xl font-dmsans-semibold mt-12 mb-2 px-2">{currentQuestionData.label}</Text>
-        {renderInput()}
-        {errorMessage && showError && currentQuestion === 2 && (
-          <Text className="text-red-500 text-sm mt-2 px-2">{errorMessage}</Text>
-        )}
-        <View className='my-4'/>
-        <AppButton
-          label="Continue"
-          disabled={
-            !currentQuestionData.state || 
-            (currentQuestion === 2 && !amountValid)
-          }
-          onPress={handleNext}
-        />
-      </View>
-    </SafeAreaView>
+        <View className="flex-1 p-4">
+          <Text className="mb-8 px-2 font-dmsans-semibold text-xl text-[#71879C]">
+            Question {currentQuestion} of 3
+          </Text>
+          <View className="mx-2 mb-6 h-[10px] rounded-full bg-gray-200">
+            <View
+              className="h-[10px] rounded-full bg-teal-500 px-2"
+              style={{ width: `${(currentQuestion / 3) * 100}%` }}
+            />
+          </View>
+
+          <Text className="mb-2 mt-12 px-2 font-dmsans-semibold text-xl">
+            {currentQuestionData.label}
+          </Text>
+          {renderInput()}
+          {errorMessage && showError && currentQuestion === 2 && (
+            <Text className="mt-2 px-2 text-sm text-red-500">{errorMessage}</Text>
+          )}
+          <View className="my-4" />
+          <AppButton
+            label="Continue"
+            disabled={!currentQuestionData.state || (currentQuestion === 2 && !amountValid)}
+            onPress={handleNext}
+          />
+        </View>
+      </SafeAreaView>
     </KeyboardAwareScrollView>
   );
 });

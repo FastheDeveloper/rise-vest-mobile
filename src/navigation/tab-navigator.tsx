@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import { Text, View, Animated, Image } from 'react-native';
 
 import { RootStackParamList } from '.';
-import { HeaderButton } from '../lib/components/HeaderButton';
+
 import One from '../screens/Dashboard/Home';
 import Two from '../screens/Dashboard/two';
 import { ActiveTabDot, FeedTabIcon, HomeTabIcon, PlansTabIcon, WalletTabIcon } from '~/lib/assets/TabIcons/Tabicons';
@@ -59,8 +59,8 @@ export default function TabLayout({ navigation }: Props) {
         tabBarActiveTintColor: activeTabColor,
         headerShown: false,
         tabBarStyle: {
-          paddingTop: 10, // Add top padding to all tabs
-          height: 90, // Increase the height to accommodate the padding
+          paddingTop: 10, 
+          height: 90, 
         },
       }}>
       <Tab.Screen

@@ -1,4 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, } from '@react-navigation/stack';
 
 import TabNavigator from './tab-navigator';
@@ -54,7 +53,7 @@ const options = {
 export default function RootStack() {
   const { isAuthenticated, hasBeenUsed,hasPin } = useAuth();
   
-console.log('hasPin stack', hasPin);
+
   const screenList = useMemo(
     () => [
       {
@@ -164,11 +163,11 @@ console.log('hasPin stack', hasPin);
     [ hasBeenUsed, isAuthenticated,hasPin]
   );
 
- // Memoize the renderApp function
+
  const renderApp = useMemo(() => {
   return screenList.find(({ cond }) => !!cond)?.node;
 }, [screenList]);
 
-// Render the Stack Navigator with the appropriate screens
+
 return <Stack.Navigator screenOptions={options}>{renderApp}</Stack.Navigator>;
 }

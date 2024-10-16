@@ -1,36 +1,55 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import React, { useState, useMemo } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { FadeInLeft, SlideInLeft, SlideOutRight, FadeOutRight } from 'react-native-reanimated';
+import Animated, {
+  FadeInLeft,
+  SlideInLeft,
+  SlideOutRight,
+  FadeOutRight,
+} from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { APP_COLOR } from '~/core/constants/colorConstants';
-import { FONT_NAMES } from '~/core/constants/fontConstants';
 import { save } from '~/lib/utils/secureStorage';
 import { useAuth } from '~/providers/AuthProvider';
 import { STORAGE_KEYS } from '~/core/constants/asyncKeys';
-import AppButton from '~/lib/components/AppButton'; 
+import AppButton from '~/lib/components/AppButton';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '~/navigation'; 
+import { RootStackParamList } from '~/navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-// Array of onboarding steps, each containing an icon, title, and description
 const onboardingSteps = [
   {
-    icon:<Image source={require('src/lib/assets/images/onBoardone.png')} style={{width:300,height:300}}/>,
-    //  <OnBoardOne width={250} height={244} />,
+    icon: (
+      <Image
+        source={require('src/lib/assets/images/onBoardone.png')}
+        style={{ width: 300, height: 300 }}
+      />
+    ),
+
     title: 'Quality assets',
     description: 'Rise invests your money into the best dollar investments around the world.',
   },
   {
-    icon:<Image source={require('src/lib/assets/images/onBoardtwo.png')} style={{width:300,height:300}}/>,
+    icon: (
+      <Image
+        source={require('src/lib/assets/images/onBoardtwo.png')}
+        style={{ width: 300, height: 300 }}
+      />
+    ),
     title: 'Superior Selection',
-    description: "Our expert team and intelligent algorithms select assets that beat the markets.",
+    description: 'Our expert team and intelligent algorithms select assets that beat the markets.',
   },
   {
-    icon:<Image source={require('src/lib/assets/images/onBoardthree.png')} style={{width:300,height:300}}/>,
+    icon: (
+      <Image
+        source={require('src/lib/assets/images/onBoardthree.png')}
+        style={{ width: 300, height: 300 }}
+      />
+    ),
     title: 'Better Performance',
-    description: 'You earn more returns, achieve more of your financial goals and protect your money from devaluation.',
+    description:
+      'You earn more returns, achieve more of your financial goals and protect your money from devaluation.',
   },
 ];
 
@@ -39,9 +58,8 @@ const Onboarding = () => {
   const { setHasBeenUsed } = useAuth();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  // State to track the current onboarding step
   const [step, setStep] = useState(0);
-  const data = onboardingSteps[step]; // Get the current step data
+  const data = onboardingSteps[step];
 
   const { backgroundColor, accentColor } = useMemo(() => {
     switch (step) {
@@ -58,7 +76,6 @@ const Onboarding = () => {
 
   const arrowColor = step === 0 ? APP_COLOR.DARK_GREY : accentColor;
 
-  // Move to the next step or finish onboarding
   const onContinue = () => {
     if (step < onboardingSteps.length - 1) {
       setStep(step + 1);
@@ -67,7 +84,6 @@ const Onboarding = () => {
     }
   };
 
-  // Mark onboarding as completed and save the state
   const endOnboarding = async () => {
     try {
       setHasBeenUsed(true);
@@ -94,7 +110,6 @@ const Onboarding = () => {
 
   const handleSignUp = async () => {
     await endOnboarding();
-    // navigation.navigate('SignUp');
   };
 
   const handleSignIn = async () => {
@@ -109,18 +124,16 @@ const Onboarding = () => {
         style={{ paddingTop: top, paddingBottom: bottom, backgroundColor }}
         key={`background-${step}`}
         entering={FadeInLeft.duration(300)}
-        exiting={FadeOutRight.duration(300)}
-      >
+        exiting={FadeOutRight.duration(300)}>
         <View className="flex-1 pt-[15%]">
           <View className="items-center">
             <Animated.View
               entering={FadeInLeft.duration(300)}
               exiting={FadeOutRight.duration(300)}
-              key={`icon-${step}`}
-            >
+              key={`icon-${step}`}>
               {data.icon}
             </Animated.View>
-            <View className="flex-row items-center gap-2 my-[10%]">
+            <View className="my-[10%] flex-row items-center gap-2">
               {onboardingSteps.map((_, index) => (
                 <View
                   key={index}
@@ -130,22 +143,20 @@ const Onboarding = () => {
               ))}
             </View>
           </View>
-          <View className="items-start px-[5%] mt-5">
+          <View className="mt-5 items-start px-[5%]">
             <Animated.Text
               entering={SlideInLeft.delay(200)}
               exiting={SlideOutRight}
-              className="font-spaceg-bold text-2xl text-left"
+              className="text-left font-spaceg-bold text-2xl"
               style={{ color: accentColor }}
-              key={`title-${step}`}
-            >
+              key={`title-${step}`}>
               {data.title}
             </Animated.Text>
-            <Animated.Text 
+            <Animated.Text
               entering={FadeInLeft.delay(300)}
               exiting={FadeOutRight}
-              className="font-dmsans-regular text-sm text-main-dark text-left mt-2.5"
-              key={`description-${step}`}
-            >
+              className="text-main-dark mt-2.5 text-left font-dmsans-regular text-sm"
+              key={`description-${step}`}>
               {data.description}
             </Animated.Text>
           </View>
@@ -154,14 +165,14 @@ const Onboarding = () => {
         <View className="absolute bottom-[10%] left-[5%] right-[5%]">
           {step === onboardingSteps.length - 1 ? (
             <>
-              <AppButton 
-                label="Sign up" 
+              <AppButton
+                label="Sign up"
                 onPress={handleSignUp}
                 style={{ backgroundColor: accentColor }}
                 textStyle={{ color: APP_COLOR.MAIN_WHITE }}
               />
-              <AppButton 
-                label="Sign in" 
+              <AppButton
+                label="Sign in"
                 onPress={handleSignIn}
                 style={{ backgroundColor: APP_COLOR.MAIN_GREY }}
                 textStyle={{ color: accentColor }}
@@ -172,14 +183,13 @@ const Onboarding = () => {
             <View className="flex-row items-center justify-between gap-4">
               <Pressable
                 onPress={onBack}
-                className="flex-[0.1] bg-APP_COLOR-MAIN_GREY rounded-lg p-3.5 items-center justify-center"
-              >
+                className="flex-[0.1] items-center justify-center rounded-lg bg-APP_COLOR-MAIN_GREY p-3.5">
                 <FontAwesome5 name="arrow-left" size={20} color={arrowColor} />
               </Pressable>
               <View className="flex-[0.4]">
-                <AppButton 
-                  onPress={onContinue} 
-                  label="Next" 
+                <AppButton
+                  onPress={onContinue}
+                  label="Next"
                   style={{ backgroundColor: APP_COLOR.MAIN_GREY }}
                   textStyle={{ color: accentColor }}
                   rightIcon="arrow-right"

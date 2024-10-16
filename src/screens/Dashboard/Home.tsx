@@ -3,7 +3,7 @@ import { View, Text, ImageBackground, TouchableOpacity, ScrollView, Pressable } 
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppButton from '~/lib/components/AppButton';
-import { BellIcon, PlusIcon, QuestionIcon, RiseIcon, ShareIcon } from '~/lib/assets/svgs/Svgs';
+import { BellIcon, PlusIcon, RiseIcon, ShareIcon } from '~/lib/assets/svgs/Svgs';
 import { FONT_NAMES } from '~/core/constants/fontConstants';
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import Animated, {
@@ -21,9 +21,8 @@ import { Plan, useAuth } from '~/providers/AuthProvider';
 
 export default function TabOneScreen() {
   const insets = useSafeAreaInsets();
-  const userName = 'Deborah';
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
-  const {userResponse,quotes,plans,rates} = useAuth();
+  const {userResponse,quotes,plans} = useAuth();
   const [cardIndex, setCardIndex] = useState(0);
   const cardData = [
     { balance: userResponse?.total_balance, gains: '0.21%' },
@@ -261,7 +260,6 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
               }}
             >
               <View className="flex-col  gap-2 ">
-                {/* <ShareIcon width={24} height={24} /> */}
                 <Text className="font-dmsans-semibold text-xl text-[#FFFFFF]">TODAY'S QUOTE</Text>
                 <View className="h-[2px] w-[30px] bg-[#FFFFFF] rounded-full my-4 " />
                 <Text className="font-dmsans-regular text-xl text-[#FFFFFF]">
