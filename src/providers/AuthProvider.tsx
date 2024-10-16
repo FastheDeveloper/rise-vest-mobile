@@ -7,16 +7,14 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { ActivityIndicator } from 'react-native';
+
 import { getValueFor, save } from '~/lib/utils/secureStorage';
 import { STORAGE_KEYS } from '~/core/constants/asyncKeys';
 import { baseURL, createApiInstance } from '~/lib/hooks/useApi';
 import { API_ROUTES } from '~/core/constants/apiRoutes';
 import { jwtDecode } from 'jwt-decode';
-import axios, { AxiosError } from 'axios'; // Make sure to import AxiosError
+import axios, { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
-
-// Define the shape of the context
 
 interface UserResponse {
   email_address: string;
@@ -49,9 +47,8 @@ interface AuthContextType {
   rates: Rate | null;
   plans: Plans | null;
   authChecked: boolean;
-  createPlan: ( planInfo: Plan) => Promise<void>;
+  createPlan: (planInfo: Plan) => Promise<void>;
   createdPlan: CreatedPlan | null;
-
 }
 
 // Create the context with a default value
@@ -101,7 +98,6 @@ export interface Plan {
   plan_image: string;
 }
 
- 
 interface CreatedPlan {
   created_at: string;
   id: string;
@@ -159,7 +155,6 @@ function AuthProvider({ children }: AuthProviderProps) {
         const hasExpired = new Date() > expiresAt;
 
         if (hasExpired) {
-        
           signOut();
         } else {
           // Token is still valid
@@ -182,9 +177,8 @@ function AuthProvider({ children }: AuthProviderProps) {
       setAuthToken(null);
     } finally {
       setIsLoading(false);
-      
-        setAuthChecked(true);
-      
+
+      setAuthChecked(true);
     }
   }, []);
 
@@ -268,7 +262,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
-        },  
+        },
       });
       console.log('Create plan response:', res.data);
       setCreatedPlan(res.data);
@@ -278,7 +272,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       Toast.show({
         type: 'success',
         text1: 'Plan Created',
-        text2: 'Your new plan has been successfully created!'
+        text2: 'Your new plan has been successfully created!',
       });
       return res.data;
     } catch (error) {
@@ -375,13 +369,13 @@ function AuthProvider({ children }: AuthProviderProps) {
       Toast.show({
         type: 'success',
         text1: 'Sign In Successful',
-        text2: 'Welcome back!'
+        text2: 'Welcome back!',
       });
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Sign In Failed',
-        text2: 'Please check your credentials and try again.'
+        text2: 'Please check your credentials and try again.',
       });
     } finally {
       setLoading(false);
@@ -418,7 +412,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       Toast.show({
         type: 'success',
         text1: 'Sign Up Successful',
-        text2: 'Your account has been created!'
+        text2: 'Your account has been created!',
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -441,11 +435,11 @@ function AuthProvider({ children }: AuthProviderProps) {
         // Non-Axios error
         console.error('Non-Axios error:', error);
       }
-      
+
       Toast.show({
         type: 'error',
         text1: 'Sign Up Failed',
-        text2: 'Please check your information and try again.'
+        text2: 'Please check your information and try again.',
       });
     } finally {
       setLoading(false);
@@ -482,13 +476,13 @@ function AuthProvider({ children }: AuthProviderProps) {
       Toast.show({
         type: 'success',
         text1: 'Signed Out',
-        text2: 'You have been successfully signed out.'
+        text2: 'You have been successfully signed out.',
       });
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Sign Out Failed',
-        text2: 'There was an error signing out. Please try again.'
+        text2: 'There was an error signing out. Please try again.',
       });
     } finally {
       setLoading(false);
@@ -538,7 +532,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         plans,
         setUserSignup,
         createPlan,
-        createdPlan
+        createdPlan,
       }}>
       {children}
     </AuthContext.Provider>

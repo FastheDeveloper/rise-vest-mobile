@@ -14,10 +14,9 @@ const AddFunds = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { rates } = useAuth();
-  // Variables for the bottom sheet
   const snapPoints = useMemo(() => ['80%'], []);
 
-  // Callbacks for the bottom sheet
+
   const handleSheetChanges = useCallback(
     (index: number) => {
       if (index === -1) {

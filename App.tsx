@@ -4,10 +4,9 @@ import 'react-native-gesture-handler';
 
 import RootStack from './src/navigation';
 import { useFonts } from 'expo-font';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FONT_NAMES } from '~/core/constants/fontConstants';
 import * as SplashScreen from 'expo-splash-screen';
-import { View, Text } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AuthProvider, { useAuth } from '~/providers/AuthProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

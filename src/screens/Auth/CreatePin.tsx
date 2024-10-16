@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { APP_COLOR } from '~/core/constants/colorConstants';
 import { useAuth } from '~/providers/AuthProvider';
 import PinInput from '~/lib/components/PinInput';
 import CustomKeypad from '~/lib/components/CustomKeypad';

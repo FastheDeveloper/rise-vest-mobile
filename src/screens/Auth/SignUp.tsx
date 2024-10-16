@@ -14,7 +14,7 @@ import { RootStackParamList } from '~/navigation';
 
 const SignUp = () => {
   const { top, bottom } = useSafeAreaInsets();
-  const { signUp, loading, setUserSignup } = useAuth();
+  const { loading, setUserSignup } = useAuth();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [userDetails, setUserDetails] = useState({
     email: '',
@@ -24,7 +24,6 @@ const SignUp = () => {
   const [showError, setShowError] = useState(false);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  // Listeners for keyboard visibility to adjust layout
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
       setIsKeyboardVisible(true)
@@ -39,12 +38,10 @@ const SignUp = () => {
     };
   }, []);
 
-  // Validate email when it changes
   useEffect(() => {
     handleEmailBlur(userDetails.email, setErrorMessage);
   }, [userDetails.email]);
 
-  // Form validation function
   const isFormValid = () => {
     return (
       validateEmail(userDetails.email) &&
@@ -53,7 +50,6 @@ const SignUp = () => {
     );
   };
 
-  // Handler for input changes
   const handleChange = (name: string, value: string) => {
     setUserDetails((prevDetails) => ({
       ...prevDetails,
@@ -61,7 +57,6 @@ const SignUp = () => {
     }));
   };
 
-  // Reset error messages when an input field is focused
   const handleInputFocus = () => {
     setErrorMessage('');
     setShowError(false);
@@ -77,16 +72,17 @@ const SignUp = () => {
       className="bg-APP_COLOR-MAIN_WHITE"
       scrollEnabled={isKeyboardVisible}
       showsVerticalScrollIndicator={false}>
-      <View className={`flex-1 bg-APP_COLOR-MAIN_WHITE px-[3%] `} style={{paddingTop: top, paddingBottom: bottom}}>
-        <View className="mt-[15%] mb-[3%]">
+      <View
+        className={`flex-1 bg-APP_COLOR-MAIN_WHITE px-[3%] `}
+        style={{ paddingTop: top, paddingBottom: bottom }}>
+        <View className="mb-[3%] mt-[15%]">
           <Text className="font-spaceg-medium text-2xl ">Create an account</Text>
-          <Text className="font-dmsans-regular text-lg mr-10   text-APP_COLOR-MAIN_GREY_TEXT">
+          <Text className="mr-10 font-dmsans-regular text-lg   text-APP_COLOR-MAIN_GREY_TEXT">
             Start building your dollar-denominated investment portfolio
           </Text>
         </View>
         <View>
           <InputField
-            // placeholder={'Email Address'}
             label="Email Address"
             onChangeText={(text: string) => handleChange('email', text)}
             onBlur={() => setShowError(true)}
@@ -96,12 +92,11 @@ const SignUp = () => {
             rightIcon={undefined}
           />
           {errorMessage && showError && (
-            <Text className="text-APP_COLOR-MAIN_RED px-[2%] font-dmsans-regular text-12">
+            <Text className="text-12 px-[2%] font-dmsans-regular text-APP_COLOR-MAIN_RED">
               {errorMessage}
             </Text>
           )}
           <InputField
-            // placeholder={'Password'}
             label="Password"
             secureTextEntry
             onChangeText={(text: string) => handleChange('password', text)}
@@ -109,15 +104,21 @@ const SignUp = () => {
             rightIcon={undefined}
           />
         </View>
-       
-        <View className="flex-col justify-start items-start mx-[2%] my-[3%]">
+
+        <View className="mx-[2%] my-[3%] flex-col items-start justify-start">
           {[
             { condition: userDetails.password.length >= 8, text: 'Minimum of 8 characters' },
             { condition: /[A-Z]/.test(userDetails.password), text: 'One UPPERCASE character' },
-            { condition: /[@$!%*?&]/.test(userDetails.password), text: 'One special character (@$!%*?&)' },
-            { condition: /^[A-Za-z\d@$!%*?&]+$/.test(userDetails.password), text: 'Only letters, numbers, and special characters (@$!%*?&)' },
+            {
+              condition: /[@$!%*?&]/.test(userDetails.password),
+              text: 'One special character (@$!%*?&)',
+            },
+            {
+              condition: /^[A-Za-z\d@$!%*?&]+$/.test(userDetails.password),
+              text: 'Only letters, numbers, and special characters (@$!%*?&)',
+            },
           ].map((item, index) => (
-            <View key={index} className="flex-row items-center mb-2">
+            <View key={index} className="mb-2 flex-row items-center">
               <Ionicons
                 name={item.condition ? 'checkmark-circle' : 'ellipse-outline'}
                 size={16}
@@ -131,8 +132,7 @@ const SignUp = () => {
           <AppButton
             label={'Sign Up'}
             disabled={!isFormValid()}
-            onPress={() => 
-            {
+            onPress={() => {
               setUserSignup({
                 email_address: userDetails.email,
                 password: userDetails.password,
@@ -143,14 +143,13 @@ const SignUp = () => {
             style={{ backgroundColor: APP_COLOR.MAIN_GREEN }}
             textStyle={{ color: APP_COLOR.MAIN_WHITE }}
           />
-          <View className="flex-row justify-center mt-4">
+          <View className="mt-4 flex-row justify-center">
             <Text className="font-dmsans-regular text-APP_COLOR-MAIN_GREY_TEXT">
               Already have an account?
             </Text>
             <Text
-              className="font-dmsans-medium text-APP_COLOR-MAIN_GREEN ml-1"
-              onPress={() => navigation.navigate('SignIn')}
-            >
+              className="ml-1 font-dmsans-medium text-APP_COLOR-MAIN_GREEN"
+              onPress={() => navigation.navigate('SignIn')}>
               Sign In
             </Text>
           </View>
