@@ -7,10 +7,11 @@ import { RootStackParamList } from '~/navigation';
 import AppButton from '~/lib/components/AppButton';
 import currency from 'currency.js';
 import { useAuth } from '~/providers/AuthProvider';
+import Toast from 'react-native-toast-message';
 const PlanReview = ({ route }: { route: { params: { planInfo: any } } }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { planInfo } = route.params;
-  const { authToken, createPlan } = useAuth();
+  const { authToken, createPlan, loading } = useAuth();
   const formatCurrency = (value: string) => {
     return currency(value || 0, { precision: 2, symbol: '' }).format();
   };
@@ -56,13 +57,21 @@ const PlanReview = ({ route }: { route: { params: { planInfo: any } } }) => {
       <View className="flex-1 items-center justify-center w-full">
       <AppButton
       label="Agree & Continue"
-      onPress={() => {
+      onPress={async () => {
   console.log('planInfo', planInfo);
         
-          createPlan( planInfo);  
-          navigation.navigate('PlanApproved');
+     await     createPlan( planInfo).then(() => {
+            navigation.navigate('PlanApproved');
+          }).catch((error) => {
+           Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'There was an error creating your plan. Please try again.'
+          });
+          });
         
       }}
+      loading={loading}
       style={{width:'90%', marginBottom:20}}
       />
       <AppButton

@@ -14,6 +14,7 @@ import { baseURL, createApiInstance } from '~/lib/hooks/useApi';
 import { API_ROUTES } from '~/core/constants/apiRoutes';
 import { jwtDecode } from 'jwt-decode';
 import axios, { AxiosError } from 'axios'; // Make sure to import AxiosError
+import Toast from 'react-native-toast-message';
 
 // Define the shape of the context
 
@@ -158,12 +159,8 @@ function AuthProvider({ children }: AuthProviderProps) {
         const hasExpired = new Date() > expiresAt;
 
         if (hasExpired) {
-          // Token has expired
-          console.log('token has expired');
-          setIsAuthenticated(false);
-          setAuthToken(null);
-          await save(STORAGE_KEYS.AUTH_TOKEN, '');
-          await save(STORAGE_KEYS.EXPIRES_AT, '');
+        
+          signOut();
         } else {
           // Token is still valid
           console.log('token is still valid');
@@ -185,7 +182,9 @@ function AuthProvider({ children }: AuthProviderProps) {
       setAuthToken(null);
     } finally {
       setIsLoading(false);
-      setAuthChecked(true);
+      
+        setAuthChecked(true);
+      
     }
   }, []);
 
@@ -263,8 +262,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const createPlan = async (planInfo: Plan) => {
-    console.log('Creating plan with info:', planInfo);
-    console.log('authToken:', authToken);
+    setLoading(true);
     try {
       const res = await axios.post(`${baseURL}${API_ROUTES.CREATE_PLAN}`, planInfo, {
         headers: {
@@ -274,10 +272,18 @@ function AuthProvider({ children }: AuthProviderProps) {
       });
       console.log('Create plan response:', res.data);
       setCreatedPlan(res.data);
+      if (authToken) {
+        await getPlans(authToken);
+      }
+      Toast.show({
+        type: 'success',
+        text1: 'Plan Created',
+        text2: 'Your new plan has been successfully created!'
+      });
       return res.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
+        const axiosError = error;
         if (axiosError.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -299,6 +305,8 @@ function AuthProvider({ children }: AuthProviderProps) {
       // Don't set isAuthenticated to false or clear authToken for a 400 error
       // as it's likely a problem with the request, not authentication
       throw error; // Re-throw the error so it can be handled by the caller
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -339,7 +347,6 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   // Dummy sign-in function
   const signIn = async (email: string, password: string) => {
-    console.log('signIn', email, password);
     setLoading(true);
 
     try {
@@ -347,16 +354,13 @@ function AuthProvider({ children }: AuthProviderProps) {
         isAuthenticated,
         getAccessToken: () => authToken ?? '',
         refreshToken: async () => {
-          // Implement your refresh token logic here
           return 'dummy_token_refresh';
         },
       }));
-      console.log('api', api);
       const res = await api.post(`${API_ROUTES.SIGN_IN}`, {
         email_address: email,
         password: password,
       });
-      console.log('res', res.data);
       setUserResponse(res.data);
       setIsAuthenticated(true);
       setAuthToken(res.data.token);
@@ -367,9 +371,18 @@ function AuthProvider({ children }: AuthProviderProps) {
 
       // Extract and store expiration time
       await extractAndStoreExpiresAt(res.data.token);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Sign In Successful',
+        text2: 'Welcome back!'
+      });
     } catch (error) {
-      console.error('Sign in error:', error);
-      // Handle the error appropriately, e.g., show an error message to the user
+      Toast.show({
+        type: 'error',
+        text1: 'Sign In Failed',
+        text2: 'Please check your credentials and try again.'
+      });
     } finally {
       setLoading(false);
     }
@@ -391,7 +404,6 @@ function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signUp = async (userSignup: UserDetails) => {
-    console.log('signUp', userSignup);
     setLoading(true);
 
     try {
@@ -402,15 +414,39 @@ function AuthProvider({ children }: AuthProviderProps) {
           return 'dummy_token_refresh';
         },
       }));
-      console.log('API request body:', JSON.stringify(userSignup, null, 2));
-      const res = await api.post(`${API_ROUTES.SIGN_UP}`, userSignup);
+      await api.post(`${API_ROUTES.SIGN_UP}`, userSignup);
+      Toast.show({
+        type: 'success',
+        text1: 'Sign Up Successful',
+        text2: 'Your account has been created!'
+      });
     } catch (error) {
-      console.error('Sign up error:', error);
-      if (axios.isAxiosError(error) && error.response) {
-        console.error('Error response:', error.response.data);
-        console.error('Status code:', error.response.status);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error;
+        if (axiosError.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Error data:', axiosError.response.data);
+          console.error('Error status:', axiosError.response.status);
+          console.error('Error headers:', axiosError.response.headers);
+        } else if (axiosError.request) {
+          // The request was made but no response was received
+          console.error('Error request:', axiosError.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error message:', axiosError.message);
+        }
+        console.error('Error config:', axiosError.config);
+      } else {
+        // Non-Axios error
+        console.error('Non-Axios error:', error);
       }
-      // Handle the error appropriately, e.g., show an error message to the user
+      
+      Toast.show({
+        type: 'error',
+        text1: 'Sign Up Failed',
+        text2: 'Please check your information and try again.'
+      });
     } finally {
       setLoading(false);
     }
@@ -419,11 +455,44 @@ function AuthProvider({ children }: AuthProviderProps) {
   // Dummy sign-out function
   const signOut = async () => {
     setLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsAuthenticated(false);
-    setAuthToken(null);
-    setLoading(false);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Clear all relevant state variables
+      setIsAuthenticated(false);
+      setAuthToken(null);
+      setUserResponse(null);
+      setRates(null);
+      setPlans(null);
+      setQuotes(null);
+      setCreatedPlan(null);
+      setUserSignup({
+        email_address: '',
+        password: '',
+        first_name: '',
+        last_name: '',
+        date_of_birth: '',
+      });
+
+      // Clear stored token and expiration time
+      await save(STORAGE_KEYS.AUTH_TOKEN, '');
+      await save(STORAGE_KEYS.EXPIRES_AT, '');
+
+      Toast.show({
+        type: 'success',
+        text1: 'Signed Out',
+        text2: 'You have been successfully signed out.'
+      });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Sign Out Failed',
+        text2: 'There was an error signing out. Please try again.'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const api = useMemo(
@@ -440,9 +509,9 @@ function AuthProvider({ children }: AuthProviderProps) {
     [isAuthenticated, authToken]
   );
 
-  if (isLoading) {
-    return <ActivityIndicator />;
-  }
+  // if (isLoading) {
+  //   return <ActivityIndicator />;
+  // }
 
   // Provide auth context to children components
   return (

@@ -9,15 +9,16 @@ import { FONT_NAMES } from '~/core/constants/fontConstants';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, Text } from 'react-native';
 import LottieView from 'lottie-react-native';
-import AuthProvider from '~/providers/AuthProvider';
+import AuthProvider, { useAuth } from '~/providers/AuthProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { ModalsProvider } from '~/providers/modalService';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-export default function App() {
-  SplashScreen.preventAutoHideAsync();
+import Toast, { BaseToast, BaseToastProps, ErrorToast } from 'react-native-toast-message';
 
-  const [loaded, error] = useFonts({
+const AppContent = () => {
+  const { authChecked } = useAuth();
+  const [fontsLoaded, fontError] = useFonts({
     [FONT_NAMES.DMSANS_BOLD]: require('~/lib/assets/fonts/DMSans-Bold.ttf'),
     [FONT_NAMES.DMSANS_MEDIUM]: require('~/lib/assets/fonts/DMSans-Medium.ttf'),
     [FONT_NAMES.DMSANS_REGULAR]: require('~/lib/assets/fonts/DMSans-Regular.ttf'),
@@ -29,44 +30,73 @@ export default function App() {
   });
   const [animationPlayed, setAnimationPlayed] = useState(false);
 
-  const LottieAnimation = () => {
-    return (
-      <LottieView
-        autoPlay
-        source={require('./src/lib/assets/LottieAnimations/splash.json')}
-        style={{
-          flex: 1,
-        }}
-        resizeMode="cover"
-        loop={false}
-        onAnimationFinish={() => setAnimationPlayed(true)}
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
+  if (!animationPlayed && !!authChecked && !!fontsLoaded) {
+    SplashScreen.hideAsync();
+    return <LottieAnimation setAnimationPlayed={setAnimationPlayed} />;
+  }
+
+  return <RootStack />;
+};
+
+const LottieAnimation = ({
+  setAnimationPlayed,
+}: {
+  setAnimationPlayed: (played: boolean) => void;
+}) => {
+  return (
+    <LottieView
+      autoPlay
+      source={require('./src/lib/assets/LottieAnimations/splash.json')}
+      style={{
+        flex: 1,
+      }}
+      resizeMode="cover"
+      loop={false}
+      onAnimationFinish={() => setAnimationPlayed(true)}
+    />
+  );
+};
+
+export default function App() {
+  SplashScreen.preventAutoHideAsync();
+  const toastConfig = {
+    success: (props: React.JSX.IntrinsicAttributes & BaseToastProps) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: '#28a745', backgroundColor: '#333' }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}
+        text2Style={{ fontSize: 14, color: '#ddd' }}
       />
-    );
+    ),
+    error: (props: React.JSX.IntrinsicAttributes & BaseToastProps) => (
+      <ErrorToast
+        {...props}
+        style={{ borderLeftColor: '#dc3545', backgroundColor: '#333' }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}
+        text2Style={{ fontSize: 14, color: '#ddd' }}
+      />
+    ),
   };
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
 
-  if (!loaded && !error) {
-    return <Text>Couldnt get fonts</Text>;
-  }
-
-  if (!animationPlayed) {
-    return <LottieAnimation />;
-  }
   return (
     <SafeAreaProvider>
-    <GestureHandlerRootView>
-      <NavigationContainer>
-        <AuthProvider>
-          <ModalsProvider>
-          <RootStack />
-          </ModalsProvider>
-        </AuthProvider>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <AuthProvider>
+            <ModalsProvider>
+              <AppContent />
+              <Toast config={toastConfig} />
+            </ModalsProvider>
+          </AuthProvider>
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

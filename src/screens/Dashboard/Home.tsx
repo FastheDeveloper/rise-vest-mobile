@@ -23,7 +23,7 @@ export default function TabOneScreen() {
   const insets = useSafeAreaInsets();
   const userName = 'Deborah';
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
-  const {userResponse,quotes,plans} = useAuth();
+  const {userResponse,quotes,plans,rates} = useAuth();
   const [cardIndex, setCardIndex] = useState(0);
   const cardData = [
     { balance: userResponse?.total_balance, gains: '0.21%' },
@@ -214,6 +214,7 @@ const navigation=useNavigation<StackNavigationProp<RootStackParamList>>();
               </Text>
               <View className="flex-row items-center justify-between gap-2">
                 <Text
+                onPress={()=>navigation.navigate('ChoosePlan')}
                   className={`font-dmsans-regular text-xl ${investmentPlans.length > 0 ? 'text-[#0898A0]' : 'text-[#94A1AD]'}`}>
                   View all
                 </Text>

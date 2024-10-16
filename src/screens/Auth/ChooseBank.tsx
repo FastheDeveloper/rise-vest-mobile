@@ -22,17 +22,15 @@ const ChooseBank = () => {
       {[
               {
                 id: 'buy-rate',
-                description: '0123456789  •  GTBank PLC',
-                date: 'Bosun Olanrewaju',
-                amount: '₦490',
-                fee: '+$10',
+                bankAccount: '0123456789  •  GTBank PLC',
+                bankAccountName: 'Bosun Olanrewaju',
+            
               },
               {
                 id: '6145785229  •  Fidelity Bank',
-                description: 'USD Sell Rate',
-                date: 'Bosun Olanrewaju',
-                amount: '₦490',
-                fee: '+$10',
+                bankAccount: '6145785229  •  Fidelity Bank',
+                bankAccountName: 'Bosun Olanrewaju',
+                
               },
             ].map((transaction) => (
               <Pressable key={transaction.id} onPress={() => navigation.navigate('TabNavigator')}>
@@ -40,10 +38,10 @@ const ChooseBank = () => {
                   <View className="mr-4 flex-1 flex-row items-start">
                     <View className="ml-3 flex-1">
                       <Text className="flex-wrap font-dmsans-regular text-base text-[#333333]">
-                        {transaction.description}
+                        {transaction.bankAccount}
                       </Text>
                       <Text className="mt-1 font-dmsans-regular text-sm text-[#71879C]">
-                        {transaction.date}
+                        {transaction.bankAccountName}
                       </Text>
                     </View>
                   </View>

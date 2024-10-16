@@ -27,6 +27,7 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     target_amount: 0,
     maturity_date: ""
   });
+  const [amountValid, setAmountValid] = useState(false);
 
   const questions = [
     { label: 'What are you saving for?', state: goalName, setState: setGoalName },
@@ -40,27 +41,40 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
     return currency(value || 0, { precision: 2, symbol: '' }).format();
   };
 
+  const handleAmountChange = (text: string) => {
+    const numericAmount = parseFloat(text.replace(/[^0-9.]/g, ''));
+    setEdittedAmount(text);
+    setTargetAmount(isNaN(numericAmount) ? '' : numericAmount.toString());
+    setAmountValid(numericAmount > 50);
+    setPlanInfo(prevState => ({
+      ...prevState,
+      target_amount: isNaN(numericAmount) ? 0 : numericAmount
+    }));
+    setErrorMessage('');
+    setShowError(false);
+  };
+
   // Format amount on blur and show error
   const handleBlurFormat = () => {
     const numericAmount = handleAmountBlur(edittedAmount, setErrorMessage);
     if (!isNaN(numericAmount) && numericAmount > 0) {
       const formattedAmount = formatCurrency(numericAmount.toString());
-      setTargetAmount(numericAmount.toString()); // Store the pure number
-      setEdittedAmount(formattedAmount); // Display the formatted amount
-      // Update planInfo immediately
-      setPlanInfo(prevState => ({
-        ...prevState,
-        target_amount: numericAmount
-      }));
+      setTargetAmount(numericAmount.toString());
+      setEdittedAmount(formattedAmount);
+      setAmountValid(numericAmount > 50);
+    } else {
+      setAmountValid(false);
     }
     setShowError(true);
   };
 
-  // Clear error message and hide error on input focus
+  // Clear input and hide error on input focus
   const handleInputFocus = () => {
-    setEdittedAmount(targetAmount); // Use the pure number for editing
+    setEdittedAmount('');
+    setTargetAmount('');
     setErrorMessage('');
     setShowError(false);
+    setAmountValid(false);
   };
 
   // Update planInfo when goalName changes
@@ -165,7 +179,7 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
       <InputField
         className="flex-1 h-12 text-base"
         value={currentQuestionData.state}
-        onChangeText={currentQuestionData.setState}
+        onChangeText={currentQuestion === 2 ? handleAmountChange : currentQuestionData.setState}
         leftIcon={currentQuestion === 2 ? <Naira width={24} height={24}/> : undefined}
         keyboardType={currentQuestion === 2 ? 'numeric' : 'default'}
         onBlur={currentQuestion === 2 ? handleBlurFormat : undefined}
@@ -202,7 +216,10 @@ const PlanDetain = withModal(({ openModal, closeModal }) => {
         <View className='my-4'/>
         <AppButton
           label="Continue"
-          disabled={!currentQuestionData.state || (currentQuestion === 2 && !!errorMessage)}
+          disabled={
+            !currentQuestionData.state || 
+            (currentQuestion === 2 && !amountValid)
+          }
           onPress={handleNext}
         />
       </View>

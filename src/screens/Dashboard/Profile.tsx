@@ -4,23 +4,17 @@ import { useAuth } from '../../providers/AuthProvider';
 import { STORAGE_KEYS } from '../../core/constants/asyncKeys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteKey, save } from '~/lib/utils/secureStorage';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '~/navigation';
 
 const Profile: React.FC = () => {
-  const { userResponse,setIsAuthenticated, } = useAuth();
+  const { userResponse,signOut } = useAuth();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const handleSignout = async () => {
     try {
-      setIsAuthenticated(false);
-      // Clear the storage keys
-      await deleteKey(
-        STORAGE_KEYS.AUTH_TOKEN,
+        signOut();
      
-      );
-      await deleteKey(
-        STORAGE_KEYS.EXPIRES_AT,
-      );
-
-      // Clear the user state
-
     } catch (error) {
       console.error('Error signing out:', error);
     }

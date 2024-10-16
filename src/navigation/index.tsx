@@ -53,6 +53,7 @@ const options = {
 };
 export default function RootStack() {
   const { isAuthenticated, hasBeenUsed,hasPin } = useAuth();
+  
 console.log('hasPin stack', hasPin);
   const screenList = useMemo(
     () => [
