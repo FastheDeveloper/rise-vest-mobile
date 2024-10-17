@@ -46,7 +46,14 @@ The app uses React Navigation for managing different screens and flow. The main 
 
 ## Authentication
 
-Authentication is handled by the `AuthProvider` located in `src/providers/AuthProvider.tsx`. This provider manages user authentication state and provides related functions to the app.
+Authentication is handled by the `AuthProvider` located in `src/providers/AuthProvider.tsx`. This provider manages user authentication state and provides related functions to the app. Key features include:
+
+- User authentication state management
+- Login and logout functionality
+- Automatic token refresh
+- Handling of expired tokens:
+  - The AuthProvider automatically signs out the user when their token expires
+  - This ensures a seamless user experience and maintains security by preventing unauthorized access with expired credentials
 
 ## Screens
 

@@ -5,27 +5,28 @@ import 'react-native-gesture-handler';
 import RootStack from './src/navigation';
 import { useFonts } from 'expo-font';
 import React, { useState } from 'react';
-import { FONT_NAMES } from '~/core/constants/fontConstants';
+import { FONT_NAMES } from './src/core/constants/fontConstants';
 import * as SplashScreen from 'expo-splash-screen';
 import LottieView from 'lottie-react-native';
-import AuthProvider, { useAuth } from '~/providers/AuthProvider';
+import AuthProvider, { useAuth } from './src/providers/AuthProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { ModalsProvider } from '~/providers/modalService';
+import { ModalsProvider } from './src/providers/modalService';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast, { BaseToast, BaseToastProps, ErrorToast } from 'react-native-toast-message';
-
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs();
 const AppContent = () => {
   const { authChecked } = useAuth();
   const [fontsLoaded, fontError] = useFonts({
-    [FONT_NAMES.DMSANS_BOLD]: require('~/lib/assets/fonts/DMSans-Bold.ttf'),
-    [FONT_NAMES.DMSANS_MEDIUM]: require('~/lib/assets/fonts/DMSans-Medium.ttf'),
-    [FONT_NAMES.DMSANS_REGULAR]: require('~/lib/assets/fonts/DMSans-Regular.ttf'),
-    [FONT_NAMES.DMSANS_SEMIBOLD]: require('~/lib/assets/fonts/DMSans-SemiBold.ttf'),
-    [FONT_NAMES.SPACEG_BOLD]: require('~/lib/assets/fonts/SpaceGrotesk-Bold.ttf'),
-    [FONT_NAMES.SPACEG_MEDIUM]: require('~/lib/assets/fonts/SpaceGrotesk-Medium.ttf'),
-    [FONT_NAMES.SPACEG_REGULAR]: require('~/lib/assets/fonts/SpaceGrotesk-Regular.ttf'),
-    [FONT_NAMES.SPACEG_SEMIBOLD]: require('~/lib/assets/fonts/SpaceGrotesk-SemiBold.ttf'),
+    [FONT_NAMES.DMSANS_BOLD]: require('./src/lib/assets/fonts/DMSans-Bold.ttf'),
+    [FONT_NAMES.DMSANS_MEDIUM]: require('./src/lib/assets/fonts/DMSans-Medium.ttf'),
+    [FONT_NAMES.DMSANS_REGULAR]: require('./src/lib/assets/fonts/DMSans-Regular.ttf'),
+    [FONT_NAMES.DMSANS_SEMIBOLD]: require('./src/lib/assets/fonts/DMSans-SemiBold.ttf'),
+    [FONT_NAMES.SPACEG_BOLD]: require('./src/lib/assets/fonts/SpaceGrotesk-Bold.ttf'),
+    [FONT_NAMES.SPACEG_MEDIUM]: require('./src/lib/assets/fonts/SpaceGrotesk-Medium.ttf'),
+    [FONT_NAMES.SPACEG_REGULAR]: require('./src/lib/assets/fonts/SpaceGrotesk-Regular.ttf'),
+    [FONT_NAMES.SPACEG_SEMIBOLD]: require('./src/lib/assets/fonts/SpaceGrotesk-SemiBold.ttf'),
   });
   const [animationPlayed, setAnimationPlayed] = useState(false);
 

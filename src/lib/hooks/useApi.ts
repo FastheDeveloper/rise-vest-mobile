@@ -1,22 +1,7 @@
 // useApi.ts
 
 import axios, { AxiosRequestHeaders, AxiosResponse } from 'axios'
-import { Schema } from 'zod'
 
-import { jwtDecode } from "jwt-decode";
-import dayjs from 'dayjs'
-import { useAuth } from '~/providers/AuthProvider'
-import { API_ROUTES } from '~/core/constants/apiRoutes';
-
-interface Mutation<T> {
-  key: string
-  path: string
-  onSuccess?: (val: T) => void
-  schema?: Schema<T>
-  onError?: (e: any) => void
-  onSettled?: () => void
-  options?: any
-}
 
 // Define a base URL for the API
 export const baseURL = 'https://rise-rn-test-api-gb2v6.ondigitalocean.app/api/v1'

@@ -2,8 +2,8 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Calendar as RNCalendar } from 'react-native-calendars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { APP_COLOR } from '~/core/constants/colorConstants';
-import { withModal } from '~/providers/modalService';
+import { APP_COLOR } from 'src/core/constants/colorConstants';
+import { withModal } from 'src/providers/modalService';
 
 
 // Calendar component wrapped with modal functionality
