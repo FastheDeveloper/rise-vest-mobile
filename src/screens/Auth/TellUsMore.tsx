@@ -166,8 +166,10 @@ const TellUsMore = withModal(({ openModal, closeModal }) => {
               }}
               textContainerStyle={{
                 width: '100%',
-                height: 50,
-                backgroundColor:'white'
+                height: 60,
+                backgroundColor:'white',
+                
+                
                 // paddingVertical:10
               }}
               codeTextStyle={{

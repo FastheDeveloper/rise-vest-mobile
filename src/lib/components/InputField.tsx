@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Pressable, Text, TextInput, View, StyleSheet, TextInputProps, Animated, TextStyle } from 'react-native';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
-import { FONT_NAMES } from '~/core/constants/fontConstants';
-import { APP_COLOR } from '~/core/constants/colorConstants';
+import { FONT_NAMES } from 'src/core/constants/fontConstants';
+import { APP_COLOR } from 'src/core/constants/colorConstants';
 
 // Update these types
 type FontAwesomeIconName = React.ComponentProps<typeof FontAwesome>['name'];

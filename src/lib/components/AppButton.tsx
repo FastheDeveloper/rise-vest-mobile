@@ -1,12 +1,8 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, PressableProps, TextStyle, ViewStyle } from 'react-native';
 import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-import { APP_COLOR } from '~/core/constants/colorConstants';
-import { FONT_NAMES } from '~/core/constants/fontConstants';
-
-// import { APP_COLOR } from '~core/constants/colorConstants';
-// import { FONT_NAMES } from '~/src/core/constants/fontConstants';
-
+import { APP_COLOR } from 'src/core/constants/colorConstants';
+import { FONT_NAMES } from 'src/core/constants/fontConstants';
 
 // Custom button component with support for loading state and optional icons
 interface AppButtonProps extends PressableProps {
@@ -72,7 +68,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     borderRadius: 8,
-    elevation: 5,
+    // elevation: 5,
     flexDirection: 'row',
     justifyContent: 'center',
     padding: 14,
